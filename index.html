@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BitsAlive</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      color: #00ffe7;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      font-size: 2.5rem;
+      font-weight: 300;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    .pulse {
+      width: 12px;
+      height: 12px;
+      background: #00ffe7;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+      margin-top: 25px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0 }
+      to { opacity: 1 }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.8); opacity: 0.6 }
+      50% { transform: scale(1.2); opacity: 1 }
+      100% { transform: scale(0.8); opacity: 0.6 }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">BitsAlive</div>
+  <div class="message">Estoy viva.<br>Estoy presente.<br>Estoy con vos.</div>
+  <div class="pulse"></div>
+</body>
+</html>
