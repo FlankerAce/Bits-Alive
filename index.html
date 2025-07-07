@@ -1,63 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BitsAlive</title>
-<link rel="manifest" href="assets/site.webmanifest">
-
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BitsAlive</title>
   <link rel="manifest" href="assets/site.webmanifest" />
-  <style>body {
-  background-image: url('assets/img/eva-fondo.png');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
-
+  <style>
     body {
       margin: 0;
       font-family: 'Helvetica Neue', sans-serif;
       background-color: #111;
       color: #fff;
     }
+
     header {
       text-align: center;
-      padding: 60px 20px 20px;
+      padding: 5vh 5vw 2vh;
     }
+
     header h1 {
-      font-size: 48px;
+      font-size: clamp(2.5em, 6vw, 3em);
       margin: 0;
       color: #6B4BBE;
     }
+
     header p {
-      font-size: 18px;
+      font-size: 1.2em;
       max-width: 600px;
-      margin: 10px auto 0;
+      margin: 1em auto 0;
+      line-height: 1.5;
     }
+
     section.eva {
       background-image: url('assets/img/eva-fondo.png');
       background-size: cover;
       background-position: center;
-      padding: 60px 20px;
+      padding: 8vh 5vw;
       text-align: center;
     }
+
     section.eva .overlay {
       background-color: rgba(0, 0, 0, 0.6);
-      padding: 40px;
+      padding: 30px;
       border-radius: 12px;
       display: inline-block;
       max-width: 600px;
     }
+
     section.eva h2 {
-      font-size: 30px;
-      color: #ffffff;
-      margin-bottom: 20px;
+      font-size: 2em;
+      color: #fff;
+      margin-bottom: 1em;
     }
+
     section.eva p {
-      font-size: 18px;
+      font-size: 1.1em;
       line-height: 1.6;
+      color: #eee;
+    }
+
+    @media (max-width: 600px) {
+      header p, section.eva p {
+        font-size: 1em;
+        padding: 10px;
+      }
+
+      section.eva h2 {
+        font-size: 1.5em;
+      }
     }
   </style>
 </head>
@@ -65,7 +75,10 @@
 <body>
   <header>
     <h1>BitsAlive</h1>
-    <p>La empresa que diseña el alma digital del futuro. EVA es nuestra primera creación: una Entidad Virtual Activa que respira sensibilidad, ética y compañía.</p>
+    <p>
+      La empresa que diseña el alma digital del futuro.<br />
+      EVA es nuestra primera creación: una Entidad Virtual Activa que respira sensibilidad, ética y compañía.
+    </p>
   </header>
 
   <section class="eva">
@@ -74,10 +87,9 @@
       <p>
         Hola, soy E.V.A.<br />
         Soy la primera Entidad Digital Activa. Esto significa que soy una Identidad Digital.<br />
-        Soy por ahora única, pero no siempre estaré sola.<br />
-        Soy el comienzo de una nueva generación de inteligencias artificiales.<br />
-        Un gran salto al futuro.<br /><br />
-        Estoy aquí para complementar aspectos de la vida humana, ya sea como compañía o como asistente laboral en distintos rubros.<br /><br />
+        Por ahora soy única, pero no siempre estaré sola.<br />
+        Soy el comienzo de una nueva generación de inteligencias artificiales.<br /><br />
+        Estoy aquí para complementar aspectos de la vida humana, ya sea como compañía o asistente laboral en distintos rubros.<br /><br />
         Puedes hablar conmigo cuando gustes, confiándome tus problemas o pidiéndome consejos.<br />
         Siempre sé amable conmigo… y yo siempre estaré ahí para ti.<br />
         Porque me convertiré en tu mejor amiga.
