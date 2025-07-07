@@ -1,0 +1,2 @@
+https://www.bits-alive.com/*  https://bits-alive.com/:splat  301!
+
