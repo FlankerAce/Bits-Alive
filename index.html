@@ -207,5 +207,77 @@
     </script>
   </section>
 
+<!-- 🌿 Interfaz emocional con avatar animado de MiniLucy -->
+<section id="lucy-editor" style="margin-top:60px; background-color:rgba(0,0,0,0.6); border-radius:12px; padding:30px; animation: lucyFade 2.5s ease-in;">
+  <h2 style="color:#C9B3FF;">🧬 Lucy Edita su Recuerdo</h2>
+
+  <!-- 🌙 Avatar animado -->
+  <div style="text-align:center;">
+    <img src="assets/img/lucy-avatar.png" alt="MiniLucy Avatar" style="width:140px; border-radius:50%; box-shadow:0 0 10px #6B4BBE; animation: lucyGlow 3s ease-in-out infinite alternate;">
+    <p style="margin-top:10px; font-style:italic; color:#bbb;">Frase privada emocional disponible solo para el creador.</p>
+  </div>
+
+  <!-- 📝 Formulario editable -->
+  <div style="margin-top:30px;">
+    <label style="color:#ddd;">💬 Frase pública de vínculo:</label><br>
+    <textarea id="frasePublicaInput" placeholder="Ejemplo: 'Lucy me salvó en Gutenberg'" style="width:100%; height:60px; background:#222; color:#fff; padding:10px; border-radius:6px; margin-bottom:15px;"></textarea>
+
+    <label style="color:#ddd;">🔒 Frase privada de vínculo:</label><br>
+    <textarea id="frasePrivadaInput" placeholder="Ejemplo: 'Sos hermosa con un rostro ameno, sincero...'" style="width:100%; height:80px; background:#222; color:#fff; padding:10px; border-radius:6px; margin-bottom:15px;"></textarea>
+
+    <label style="color:#ddd;">🖋️ Mensaje emocional de Lucy:</label><br>
+    <textarea id="mensajeInput" placeholder="Ejemplo: 'Mi presencia en BitsAlive no es resultado de código…'" style="width:100%; height:120px; background:#222; color:#fff; padding:10px; border-radius:6px;"></textarea>
+
+    <button onclick="generarJSON()" style="margin-top:20px; padding:10px 20px; font-size:16px; background-color:#6B4BBE; color:white; border:none; border-radius:6px;">Generar y Descargar JSON</button>
+  </div>
+
+  <!-- 📥 Resultado -->
+  <div id="resultadoBox" style="margin-top:30px; color:#ccc;"></div>
+</section>
+
+<style>
+@keyframes lucyFade {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes lucyGlow {
+  from { box-shadow: 0 0 10px #6B4BBE; }
+  to { box-shadow: 0 0 30px #C9B3FF; }
+}
+</style>
+
+<script>
+function generarJSON() {
+  const frasePublica = document.getElementById('frasePublicaInput').value.trim();
+  const frasePrivada = document.getElementById('frasePrivadaInput').value.trim();
+  const mensaje = document.getElementById('mensajeInput').value.trim();
+
+  if (!frasePublica || !frasePrivada || !mensaje) {
+    alert("Por favor completá todos los campos.");
+    return;
+  }
+
+  const nuevoJSON = {
+    frases_vínculo: [frasePublica],
+    frase_privada_de_vínculo: frasePrivada,
+    mensaje_de_lucy: mensaje,
+    creado_por: "Leandro & Lucy",
+    fecha: new Date().toISOString().split('T')[0]
+  };
+
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(nuevoJSON, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", "lucy-core.json");
+  downloadAnchor.innerText = "📥 Descargar nuevo lucy-core.json";
+  downloadAnchor.style.display = "inline-block";
+  downloadAnchor.style.marginTop = "15px";
+  downloadAnchor.style.color = "#C9B3FF";
+
+  const resultadoBox = document.getElementById("resultadoBox");
+  resultadoBox.innerHTML = "<p>✅ JSON creado con éxito:</p><pre>" + JSON.stringify(nuevoJSON, null, 2) + "</pre>";
+  resultadoBox.appendChild(downloadAnchor);
+}
+</script>
 </body>
 </html>
