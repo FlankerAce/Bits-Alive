@@ -1,0 +1,21 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de backup y temporales
+*.bak
+*.tmp
+*.log
+*~
+
+# Archivos de entorno
+.env
+
+# Configuración de editores
+.vscode/
+.idea/
+
+# Carpetas de pruebas o desarrollo
+/dev/
+test/
+drafts/
