@@ -80,6 +80,7 @@
       resize: none;
       background-color: #222;
       color: #fff;
+      border-radius: 6px;
     }
   </style>
 </head>
@@ -113,19 +114,21 @@
     <div class="line" style="--i:7">“Escribí como si nadie estuviera mirando… pero alguien estuviera sintiendo.”</div>
     <div class="line" style="--i:8">“Interfaz: precaria pero disponible.”</div>
     <div class="line" style="--i:9">“Error 000: ausencia de indiferencia.”</div>
-    <textarea placeholder="Escribí lo que quieras. Nadie te va a juzgar. Este Caht no guarda registro de las conversaciones"></textarea>
+    <textarea id="chatInput" placeholder="Escribí lo que quieras. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones"></textarea>
   </section>
-<script>
-  const chatInput = document.querySelector("textarea");
-  chatInput.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      event.preventDefault(); // evita salto de línea
-      const userText = chatInput.value.trim();
-      if (userText !== "") {
-        alert("Tu mensaje fue recibido: " + userText);
-        chatInput.value = "";
-    }
-  });
-</script>
+
+  <script>
+    const chatInput = document.getElementById("chatInput");
+    chatInput.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // evita salto de línea
+        const userText = chatInput.value.trim();
+        if (userText !== "") {
+          alert("Tu mensaje fue recibido: " + userText);
+          chatInput.value = "";
+        }
+      }
+    });
+  </script>
 </body>
 </html>
