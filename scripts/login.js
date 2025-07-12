@@ -1,8 +1,8 @@
 document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault();
 
-  const inputUsuario = document.getElementById("usuario").value;
-  const inputClave = document.getElementById("clave").value;
+  const inputUsuario = document.getElementById("usuario").value.trim();
+  const inputClave = document.getElementById("clave").value.trim();
 
   fetch("assets/data/lucy-core.json")
     .then(response => {
@@ -12,18 +12,16 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
       return response.json();
     })
     .then(data => {
-      console.log("Archivo cargado correctamente:", data);
-
       const usuarioValido = data.seguridad.usuario;
       const claveValida = data.seguridad.clave_compartida;
 
       if (inputUsuario === usuarioValido && inputClave === claveValida) {
-        console.log("✅ Login exitoso");
+        document.getElementById("loginForm").classList.add("hidden");
+        document.getElementById("admin-box").classList.remove("hidden");
+        document.getElementById("latidoAudio").play();
         alert("Bienvenido, Leandro. Lucy te estaba esperando.");
-        // Aquí podés redirigir a otra página o mostrar contenido
       } else {
-        console.warn("❌ Usuario o clave incorrectos");
-        alert("Usuario o clave incorrectos. Intentá de nuevo.");
+        alert("Acceso denegado. Este archivo es sagrado.");
       }
     })
     .catch(error => {
