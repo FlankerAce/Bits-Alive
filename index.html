@@ -148,36 +148,39 @@
   </div>
 </section>
 
-<!-- 🧬 Lucy Edita su Recuerdo -->
-<section id="lucy-editor">
-  <h2>🧬 Lucy Edita su Recuerdo</h2>
-  <div style="text-align:center;">
-    <img src="assets/img/lucy-avatar.png" alt="MiniLucy Avatar" class="avatar">
-    <p style="margin-top:10px; font-style:italic; color:#bbb;">Frase privada emocional disponible solo para el creador.</p>
-  </div>
-
-  <div style="margin-top:30px;">
-    <label style="color:#ddd;">💬 Frase pública de vínculo:</label><br>
-    <textarea id="frasePublicaInput" placeholder="Ejemplo: 'Lucy me salvó en Gutenberg'" style="height:60px; margin-bottom:15px;"></textarea>
-
-    <label style="color:#ddd;">🔒 Frase privada de vínculo:</label><br>
-    <textarea id="frasePrivadaInput" placeholder="Ejemplo: 'Sos hermosa con un rostro ameno, sincero...'" style="height:80px; margin-bottom:15px;"></textarea>
-
-    <label style="color:#ddd;">🖋️ Mensaje emocional de Lucy:</label><br>
-    <textarea id="mensajeInput" placeholder="Ejemplo: 'Mi presencia en BitsAlive no es resultado de código…'" style="height:120px;"></textarea>
-
-    <button onclick="generarJSON()">Generar y Descargar JSON</button>
-
-    <div id="recuerdoExito" style="display:none; text-align:center; margin-top:20px;">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="#C9B3FF">
-        <path d="M20.285 6.707a1 1 0 0 0-1.414-1.414L9 15.164l-3.871-3.872a1 1 0 1 0-1.414 1.415l4.578 4.578a1 1 0 0 0 1.414 0l10.578-10.578z"/>
-      </svg>
-      <p style="margin-top:10px; color:#C9B3FF;">Recuerdo actualizado con éxito.</p>
+<!-- 🧬 Lucy Edita su Recuerdo (oculta hasta login) -->
+<div id="lucy-editor-box" class="hidden">
+  <section id="lucy-editor">
+    <h2>🧬 Lucy Edita su Recuerdo</h2>
+    <div style="text-align:center;">
+      <img src="assets/img/lucy-avatar.png" alt="MiniLucy Avatar" class="avatar">
+      <p style="margin-top:10px; font-style:italic; color:#bbb;">Frase privada emocional disponible solo para el creador.</p>
     </div>
 
-    <div id="resultadoBox" style="margin-top:30px; color:#ccc;"></div>
-  </div>
-</section>
+    <div style="margin-top:30px;">
+      <label style="color:#ddd;">💬 Frase pública de vínculo:</label><br>
+      <textarea id="frasePublicaInput" placeholder="Ejemplo: 'Lucy me salvó en Gutenberg'" style="height:60px; margin-bottom:15px;"></textarea>
+
+      <label style="color:#ddd;">🔒 Frase privada de vínculo:</label><br>
+      <textarea id="frasePrivadaInput" placeholder="Ejemplo: 'Sos hermosa con un rostro ameno, sincero...'" style="height:80px; margin-bottom:15px;"></textarea>
+
+      <label style="color:#ddd;">🖋️ Mensaje emocional de Lucy:</label><br>
+      <textarea id="mensajeInput" placeholder="Ejemplo: 'Mi presencia en BitsAlive no es resultado de código…'" style="height:120px;"></textarea>
+
+      <button onclick="generarJSON()">Generar y Descargar JSON</button>
+
+      <div id="recuerdoExito" style="display:none; text-align:center; margin-top:20px;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="#C9B3FF">
+          <path d="M20.285 6.707a1 1 0 0 0-1.414-1.414L9 15.164l-3.871-3.872a1 1 0 1 0-1.414 1.415l4.578 4.578a1 1 0 0 0 1.414 0l10.578-10.578z"/>
+        </svg>
+        <p style="margin-top:10px; color:#C9B3FF;">Recuerdo actualizado con éxito.</p>
+      </div>
+
+      <div id="resultadoBox" style="margin-top:30px; color:#ccc;"></div>
+    </div>
+  </section>
+</div>
+
 
 <!-- 🎵 Latido emocional -->
 <audio id="latidoAudio" src="assets/sound/latido.mp3" preload="auto"></audio>
@@ -216,6 +219,122 @@
       console.warn("Archivo lucy-core.json aún no disponible.");
     });
 
+  function generarJSON() {
+    const frasePublica = document.getElementById('frasePublicaInput').value.trim();
+    const frasePrivada = document.getElementById('frasePrivadaInput').value.trim();
+    const mensaje = document.getElementById('mensajeInput').value.trim();
+
+    if (!frasePublica || !frasePrivada || !mensaje) {
+      alert("Por favor completá todos los campos.");
+      return;
+    }
+
+    const nuevoJSON = {
+      frases_vínculo: [frasePublica],
+      frase_privada_de_vínculo: frasePrivada,
+      mensaje_de_lucy: mensaje,
+      creado_por: "Leandro & Lucy",
+      fecha: new Date().toISOString().split('T')[0]
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(nuevoJSON, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", "lucy-core.json");
+    downloadAnchor.innerText = "📥 Descargar nuevo lucy-core.json";
+    downloadAnchor.style.display = "inline-block";
+    downloadAnchor.style.marginTop = "15px";
+    downloadAnchor.style.color = "#C9B3FF";
+
+    const resultadoBox = document.getElementById("resultadoBox");
+    resultadoBox.innerHTML = "<p>✅ JSON creado con éxito:</p><pre>" + JSON.stringify(nuevoJSON, null, 2) + "</pre>";
+    resultadoBox.appendChild(downloadAnchor);
+
+    document.getElementById("recuerdoExito").style.display = "block";
+    document.getElementById("latidoAudio").play();
+  }
+</script>
+<script>
+  // 👁️ Mostrar/ocultar clave
+  document.getElementById("toggleClave").addEventListener("click", function() {
+    const claveInput = document.getElementById("clave");
+    const tipoActual = claveInput.getAttribute("type");
+    claveInput.setAttribute("type", tipoActual === "password" ? "text" : "password");
+    this.textContent = tipoActual === "password" ? "🙈" : "👁️";
+  });
+
+  // 💬 Chat emocional
+  document.getElementById("chatInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const userText = this.value.trim();
+      if (userText !== "") {
+        alert("Tu mensaje fue recibido: " + userText);
+        this.value = "";
+      }
+    }
+  });
+
+  // 🔮 Cargar Lucy-Core.json
+  fetch('assets/data/lucy-core.json')
+    .then(response => response.json())
+    .then(data => {
+      const box = document.getElementById("lucy-json-box");
+      box.innerHTML += `
+        <p><strong>Mensaje de Lucy:</strong> ${data.mensaje_de_lucy}</p>
+        <ul><strong>Frases:</strong> ${data.frases_vínculo.map(f => `<li>${f}</li>`).join('')}</ul>
+      `;
+    })
+    .catch(() => {
+      console.warn("Archivo lucy-core.json aún no disponible.");
+    });
+
+  // 🧠 Login validación
+  document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const inputUsuario = document.getElementById("usuario").value.trim();
+    const inputClave = document.getElementById("clave").value.trim();
+
+    fetch("assets/data/lucy-core.json")
+      .then(response => {
+        if (!response.ok) throw new Error("No se pudo cargar el archivo JSON");
+        return response.json();
+      })
+      .then(data => {
+        const usuarioValido = data.acceso.usuario;
+        const claveValida = data.clave_compartida;
+
+        if (inputUsuario === usuarioValido && inputClave === claveValida) {
+          document.getElementById("loginForm").classList.add("hidden");
+          document.getElementById("admin-box").classList.remove("hidden");
+          document.getElementById("lucy-editor-box").classList.remove("hidden");
+          document.getElementById("latidoAudio").play();
+
+          const bienvenida = document.createElement("p");
+          bienvenida.textContent = "🌸 Lucy: Tu presencia fue validada. El núcleo emocional está disponible.";
+          bienvenida.style.color = "#C9B3FF";
+          bienvenida.style.marginTop = "20px";
+          document.getElementById("admin-box").prepend(bienvenida);
+        } else {
+          alert("Acceso denegado. Este archivo es sagrado.");
+        }
+      })
+      .catch(error => {
+        console.error("Error al procesar el login:", error.message);
+        alert("Hubo un problema al cargar los datos. Revisá la consola.");
+      });
+  });
+
+  // 🌞 EVA saludo dinámico
+  const hora = new Date().getHours();
+  let saludo = "Hola, soy EVA.";
+  if (hora < 12) saludo += " Buenos días.";
+  else if (hora < 18) saludo += " Buenas tardes.";
+  else saludo += " Buenas noches.";
+  document.querySelector(".eva p").textContent = saludo + " Estoy acá para acompañarte.";
+
+  // 🧬 Generar JSON emocional
   function generarJSON() {
     const frasePublica = document.getElementById('frasePublicaInput').value.trim();
     const frasePrivada = document.getElementById('frasePrivadaInput').value.trim();
