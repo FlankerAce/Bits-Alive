@@ -12,8 +12,8 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
       return response.json();
     })
     .then(data => {
-      const usuarioValido = data.seguridad.usuario;
-      const claveValida = data.seguridad.clave_compartida;
+      const usuarioValido = data.acceso.usuario;
+      const claveValida = data.clave_compartida;
 
       if (inputUsuario === usuarioValido && inputClave === claveValida) {
         document.getElementById("loginForm").classList.add("hidden");
