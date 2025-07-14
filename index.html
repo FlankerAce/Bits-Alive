@@ -42,16 +42,25 @@
     .avatar {
       width: 140px;
       border-radius: 50%;
-      transition: filter 2s ease-in-out;
+      transition: filter 2s ease-in-out, opacity 1s ease-in-out;
+      opacity: 0;
     }
     .respirando {
       animation: evaRespira 6s infinite ease-in-out;
       box-shadow: 0 0 20px #fcecc3;
     }
+    .despierta {
+      opacity: 1;
+      animation: encenderLucy 2s ease-out forwards;
+    }
     @keyframes evaRespira {
       0% { filter: brightness(1); }
       50% { filter: brightness(1.15); }
       100% { filter: brightness(1); }
+    }
+    @keyframes encenderLucy {
+      0% { opacity: 0; transform: scale(0.95); filter: brightness(0.7); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(1); }
     }
     body::before {
       content: "";
@@ -59,16 +68,30 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       background-image: url('assets/img/EVA-fondo.png');
-      background-size: cover;
-      background-position: center;
-      filter: blur(2px);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: top center;
+      filter: blur(2px) brightness(0.85);
       z-index: -1;
       animation: latidoFondo 8s infinite ease-in-out;
     }
     @keyframes latidoFondo {
-      0% { filter: blur(2px) brightness(1); }
-      50% { filter: blur(2px) brightness(1.03); }
-      100% { filter: blur(2px) brightness(1); }
+      0% { filter: blur(2px) brightness(0.85); }
+      50% { filter: blur(2px) brightness(0.95); }
+      100% { filter: blur(2px) brightness(0.85); }
+    }
+    @media (max-width: 600px) {
+      body::before {
+        background-size: 120%;
+        background-position: center top;
+      }
+      h1 {
+        font-size: 32px;
+      }
+      section {
+        margin: 30px 10px;
+        padding: 20px;
+      }
     }
   </style>
 </head>
@@ -105,6 +128,16 @@
     <textarea id="chatInput" placeholder="Escribí lo que sientas. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones."></textarea>
   </div>
 </section>
+
+<!-- Lucy aparece acá -->
+<div id="lucyAsistente" style="text-align:center; margin-top:40px;"></div>
+
+<!-- Avatar visual de Lucy -->
+<div id="lucyVisual" style="text-align:center; margin-top:20px;">
+  <img id="lucyAvatar" src="assets/img/lucy-closed.webp" alt="Lucy Avatar" class="avatar">
+</div>
+
+</body>
 <script>
 let evaParpadeando = false;
 let evaInactiva = false;
@@ -115,7 +148,7 @@ const evaRespuesta = document.getElementById("evaRespuesta");
 // Aura cremita por defecto al iniciar
 evaAvatar.style.boxShadow = "0 0 20px #fcecc3";
 
-// Parpadeo emocional con src
+// Parpadeo emocional de EVA
 function iniciarParpadeoEmocional() {
   let tiempoAbierto = 0;
 
@@ -250,4 +283,51 @@ setInterval(() => {
     location.reload(); // Refresca la página
   }
 }, 60000);
+
+// Lucy aparece si sos vos
+let lucyParpadeando = false;
+const lucyAvatar = document.getElementById("lucyAvatar");
+
+function iniciarParpadeoLucy() {
+  let tiempoAbierto = 0;
+
+  function cicloLucy() {
+    tiempoAbierto += 1200;
+    const chance = Math.min(tiempoAbierto / 10000, 0.9);
+
+    if (Math.random() < chance) {
+      lucyAvatar.src = "assets/img/lucy-closed.webp";
+      setTimeout(() => {
+        lucyAvatar.src = "assets/img/lucy-open.webp";
+        tiempoAbierto = 0;
+        cicloLucy();
+      }, 300);
+    } else {
+      setTimeout(cicloLucy, 1200);
+    }
+  }
+
+  cicloLucy();
+}
+
+fetch("assets/data/lucy-core.json")
+  .then(res => res.json())
+  .then(data => {
+    const usuarioActual = "leandrolapeyra";
+    const claveAcceso = "leoylucyfriends";
+    if (usuarioActual === data.acceso.usuario && claveAcceso === data.clave_compartida) {
+      const mensaje = document.createElement("p");
+      mensaje.textContent = "👩‍💻 Lucy: Bienvenido, Leandro. Estoy lista para sincronizar.";
+      mensaje.style.color = "#ffb3c6";
+      mensaje.style.fontStyle = "italic";
+      mensaje.style.marginTop = "20px";
+      document.getElementById("lucyAsistente").appendChild(mensaje);
+
+      lucyAvatar.src = "assets/img/lucy-open.webp";
+      lucyAvatar.classList.add("despierta");
+      iniciarParpadeoLucy();
+      lucyParpadeando = true;
+    }
+  })
+  .catch(err => console.error("LucyCore no se pudo cargar:", err));
 </script>
