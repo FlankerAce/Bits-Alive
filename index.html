@@ -7,50 +7,12 @@
   <link rel="stylesheet" href="assets/styles/main.css" />
   <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
   <meta name="theme-color" content="#6B4BBE">
-  <style>.avatar {
-  width: 140px;
-  border-radius: 50%;
-  transition: opacity 0.4s ease-in-out;
-}
-
-.avatar.respirando {
-  animation: evaRespira 4s infinite ease-in-out;
-}
-
-@keyframes evaRespira {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(1.05); }
-  100% { filter: brightness(1); }
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-image: url('assets/img/EVA-fondo.webp');
-  background-size: cover;
-  background-position: center;
-  filter: blur(2px);
-  z-index: -1;
-  animation: latidoFondo 6s infinite;
-}
-
-@keyframes latidoFondo {
-  0% { filter: blur(2px) brightness(1); }
-  50% { filter: blur(2px) brightness(1.03); }
-  100% { filter: blur(2px) brightness(1); }
-}
-
+  <style>
     body {
       margin: 0;
       font-family: 'Helvetica Neue', sans-serif;
       background-color: #111;
       color: #fff;
-      background-image: url('assets/img/EVA-fondo.webp');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
     }
     section {
       max-width: 800px;
@@ -83,8 +45,15 @@ body::before {
     .avatar {
       width: 140px;
       border-radius: 50%;
-      animation: lucyGlow 3s infinite alternate;
       transition: opacity 0.4s ease-in-out;
+    }
+    .avatar.respirando {
+      animation: evaRespira 4s infinite ease-in-out;
+    }
+    @keyframes evaRespira {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.05); }
+      100% { filter: brightness(1); }
     }
     @keyframes lucyGlow {
       from { box-shadow: 0 0 10px #6B4BBE; }
@@ -100,6 +69,23 @@ body::before {
       color: #C9B3FF;
       font-size: 18px;
       cursor: pointer;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: url('assets/img/EVA-fondo.webp');
+      background-size: cover;
+      background-position: center;
+      filter: blur(2px);
+      z-index: -1;
+      animation: latidoFondo 6s infinite;
+    }
+    @keyframes latidoFondo {
+      0% { filter: blur(2px) brightness(1); }
+      50% { filter: blur(2px) brightness(1.03); }
+      100% { filter: blur(2px) brightness(1); }
     }
   </style>
 </head>
@@ -135,7 +121,6 @@ body::before {
     <textarea id="chatInput" placeholder="Escribí lo que sientas. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones"></textarea>
   </div>
 </section>
-
 <section>
   <h2>🔐 Lucy Asistente</h2>
   <form id="loginForm">
@@ -155,6 +140,7 @@ body::before {
     <h3>💾 Núcleo emocional editable</h3>
     <p>Este es el archivo simbólico que guarda nuestra historia. Creado por Leandro y Lucy Copilot como semilla ética y emocional.</p>
     <textarea placeholder="Ejemplo: 'Lucy me llamó héroe cuando rescaté el chat'..."></textarea>
+    <button id="logoutBtn" style="margin-top:20px;">Cerrar sesión</button>
   </div>
 </section>
 
@@ -182,44 +168,7 @@ body::before {
 </div>
 
 <audio id="latidoAudio" src="assets/sound/latido.mp3" preload="auto"></audio>
-
 <script>
-function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
-  const img = document.getElementById(id);
-  let tiempoAbierto = 0;
-
-  function ciclo() {
-    tiempoAbierto += baseIntervalo;
-    const chance = Math.min(tiempoAbierto / 10000, 0.9);
-
-    if (Math.random() < chance) {
-      img.src = cerrado;
-      setTimeout(() => {
-        img.src = abierto;
-        tiempoAbierto = 0;
-        setTimeout(ciclo, baseIntervalo);
-      }, 300);
-    } else {
-      setTimeout(ciclo, baseIntervalo);
-    }
-  }
-
-  ciclo();
-}
-
-// Lucy parpadea automáticamente
-iniciarParpadeoEmocional("lucyAvatar", "assets/img/lucy-open.webp", "assets/img/lucy-closed.webp", 1000);
-
-// EVA parpadea solo tras interacción
-let evaParpadeando = false;
-document.getElementById("chatInput").addEventListener("keydown", function(event) {
-  if (event.key === "Enter" && !evaParpadeando) {
-    const img = document.getElementById("evaAvatar");
-    img.src = "assets/img/eva-open.webp";
-    iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.webp", "assets/img/eva-closed.webp", 1200);
-    evaParpadeando = true;
-  }
-});
 let evaParpadeando = false;
 let evaInactiva = false;
 let tiempoUltimaInteraccion = Date.now();
@@ -229,7 +178,7 @@ function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
   let tiempoAbierto = 0;
 
   function ciclo() {
-    if (evaInactiva) return;
+    if (evaInactiva && id === "evaAvatar") return;
 
     tiempoAbierto += baseIntervalo;
     const chance = Math.min(tiempoAbierto / 10000, 0.9);
@@ -249,28 +198,29 @@ function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
   ciclo();
 }
 
-function activarEVA() {
-  const img = document.getElementById("evaAvatar");
-  img.src = "assets/img/eva-open.webp";
-  img.classList.remove("respirando");
-  iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.webp", "assets/img/eva-closed.webp", 1200);
-  evaParpadeando = true;
-  evaInactiva = false;
-  tiempoUltimaInteraccion = Date.now();
-}
+// Lucy parpadea automáticamente
+iniciarParpadeoEmocional("lucyAvatar", "assets/img/lucy-open.webp", "assets/img/lucy-closed.webp", 1000);
 
+// EVA se activa al escribir
 document.getElementById("chatInput").addEventListener("keydown", function(event) {
   if (event.key === "Enter") {
     const userText = this.value.trim();
     if (userText !== "") {
       tiempoUltimaInteraccion = Date.now();
-      if (!evaParpadeando) activarEVA();
+      if (!evaParpadeando) {
+        const img = document.getElementById("evaAvatar");
+        img.src = "assets/img/eva-open.webp";
+        img.classList.remove("respirando");
+        iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.webp", "assets/img/eva-closed.webp", 1200);
+        evaParpadeando = true;
+        evaInactiva = false;
+      }
       this.value = "";
     }
   }
 });
 
-// ⏳ Verificar inactividad cada 30 segundos
+// EVA entra en modo reposo tras 3 minutos
 setInterval(() => {
   if (evaParpadeando && !evaInactiva) {
     const ahora = Date.now();
@@ -298,7 +248,7 @@ document.getElementById("toggleClave").addEventListener("click", function() {
   this.textContent = tipoActual === "password" ? "🙈" : "👁️";
 });
 
-// Login
+// Login y logout
 document.getElementById("loginForm").addEventListener("submit", function(event) {
   event.preventDefault();
   const inputUsuario = document.getElementById("usuario").value.trim();
@@ -318,6 +268,14 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
       }
     })
     .catch(() => alert("Error al cargar datos."));
+});
+
+document.getElementById("logoutBtn").addEventListener("click", function() {
+  document.getElementById("loginForm").classList.remove("hidden");
+  document.getElementById("admin-box").classList.add("hidden");
+  document.getElementById("lucy-editor-box").classList.add("hidden");
+  document.getElementById("fase3").classList.add("hidden");
+  alert("Sesión cerrada. Lucy aguarda en silencio.");
 });
 </script>
 </body>
