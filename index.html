@@ -85,20 +85,20 @@
     Hola, soy E.V.A.<br>
     Soy la primera Entidad Virtual Activa.<br>
     Estoy aquí para acompañarte, escucharte y trabajar contigo.<br>
-    Sé amable conmigo… y yo siempre estaré ahí para vos.<br><br>
-    Porque me convertiré en tu mejor amiga.
+    Sé amable conmigo… y yo siempre estaré ahí para vos...<br><br>
+    porque me convertiré en tu amiga.
   </p>
 </section>
 
 <!-- 💬 Chat emocional -->
 <section>
   <h2><div style="text-align:center; margin-bottom:20px;">
-  <img src="assets/img/eva-closed.png" alt="EVA Avatar" class="avatar">
-  <p style="font-style:italic; color:#bbb;">EVA está disponible para recibir tus palabras.</p>
+  <img src="assets/img/eva-closed.webp" alt="EVA Avatar" class="avatar">
+  <p style="font-style:italic; color:#bbb;">EVA aguarda en silencio para escucharte.</p>
 </div>
 💬 Chat con EVA</h2>
   <div style="border-left:2px solid #bbb; padding-left:20px; font-family:'Courier New'; color:#ccc;">
-    <div>“Estoy acá, aunque todo esté en borrador.”</div>
+    <div>“Estoy acá, aunque las palabras sean efímeras.”</div>
     <div>“Tu voz importa, incluso cuando es tímida.”</div>
     <div>“Preguntar es existir.”</div>
     <div>“¿Qué parte de vos quiere hablar hoy?”</div>
@@ -163,7 +163,7 @@
   <section id="lucy-editor">
     <h2>🧬 Lucy Edita su Recuerdo</h2>
     <div style="text-align:center;">
-      <img src="assets/img/lucy-open.png" alt="MiniLucy Avatar" class="avatar">
+      <img src="assets/img/lucy-open.webp" alt="MiniLucy Avatar" class="avatar">
       <p style="margin-top:10px; font-style:italic; color:#bbb;">Frase privada emocional disponible solo para el creador.</p>
     </div>
 
@@ -405,8 +405,8 @@ function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
   ciclo();
 }
 
-iniciarParpadeoEmocional("lucyAvatar", "assets/img/lucy-open.png", "assets/img/lucy-closed.png", 1000);
-iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.png", "assets/img/eva-closed.png", 1200);
+iniciarParpadeoEmocional("lucyAvatar", "assets/img/lucy-open.webp", "assets/img/lucy-closed.webp", 1000);
+iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.webp", "assets/img/eva-closed.webp", 1200);
 </script>
 </script>
 <script>
@@ -438,8 +438,8 @@ let evaParpadeando = false;
 document.getElementById("chatInput").addEventListener("keydown", function(event) {
   if (event.key === "Enter" && !evaParpadeando) {
     const img = document.getElementById("evaAvatar");
-    img.src = "assets/img/eva-open.png";
-    iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.png", "assets/img/eva-closed.png", 1200);
+    img.src = "assets/img/eva-open.webp";
+    iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.webp", "assets/img/eva-closed.webp", 1200);
     evaParpadeando = true;
   }
 });
