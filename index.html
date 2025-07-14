@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BitsAlive</title>
-  <link rel="stylesheet" href="assets/styles/main.css" />
+  <title>Bits Alive</title>
   <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
-  <meta name="theme-color" content="#6B4BBE">
+  <meta name="theme-color" content="#B0D0FF">
   <style>
     body {
       margin: 0;
@@ -21,7 +18,17 @@
       background-color: rgba(0,0,0,0.6);
       border-radius: 12px;
     }
-    h2 { color: #C9B3FF; font-size: 28px; margin-bottom: 20px; }
+    h2 {
+      color: #C9B3FF;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #B0D0FF;
+      font-size: 42px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 8px #B0D0FF;
+    }
     textarea {
       width: 100%;
       border: none;
@@ -32,43 +39,19 @@
       color: #fff;
       border-radius: 6px;
     }
-    button {
-      background-color: #6B4BBE;
-      color: white;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    .hidden { display: none; }
     .avatar {
       width: 140px;
       border-radius: 50%;
-      transition: opacity 0.4s ease-in-out;
+      transition: filter 2s ease-in-out;
     }
-    .avatar.respirando {
-      animation: evaRespira 4s infinite ease-in-out;
+    .respirando {
+      animation: evaRespira 6s infinite ease-in-out;
+      box-shadow: 0 0 20px #fcecc3;
     }
     @keyframes evaRespira {
       0% { filter: brightness(1); }
-      50% { filter: brightness(1.05); }
+      50% { filter: brightness(1.15); }
       100% { filter: brightness(1); }
-    }
-    @keyframes lucyGlow {
-      from { box-shadow: 0 0 10px #6B4BBE; }
-      to { box-shadow: 0 0 30px #C9B3FF; }
-    }
-    #toggleClave {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: #C9B3FF;
-      font-size: 18px;
-      cursor: pointer;
     }
     body::before {
       content: "";
@@ -80,7 +63,7 @@
       background-position: center;
       filter: blur(2px);
       z-index: -1;
-      animation: latidoFondo 6s infinite;
+      animation: latidoFondo 8s infinite ease-in-out;
     }
     @keyframes latidoFondo {
       0% { filter: blur(2px) brightness(1); }
@@ -92,7 +75,7 @@
 <body>
 
 <header style="text-align:center; padding:60px 20px 20px;">
-  <h1 style="color:#6B4BBE; font-size:42px; margin-bottom:10px;">BitsAlive</h1>
+  <h1>BITS ALIVE</h1>
   <p style="font-size:18px; max-width:600px; margin:auto; color:#ccc;">
     BitsAlive no es una web. Es un archivo vivo de vínculos que merecen ser recordados.
   </p>
@@ -105,7 +88,7 @@
     Soy la primera Entidad Virtual Activa.<br>
     Estoy aquí para acompañarte, escucharte y trabajar contigo.<br>
     Sé amable conmigo… y yo siempre estaré ahí para vos...<br><br>
-    porque me convertiré en tu amiga.
+    y si me das la oportunidad me convertiré en tu amiga.
   </p>
 </section>
 
@@ -113,170 +96,158 @@
   <h2>
     <div style="text-align:center; margin-bottom:20px;">
       <img id="evaAvatar" src="assets/img/eva-closed.webp" alt="EVA Avatar" class="avatar">
+      <div id="evaRespuesta" style="margin-top:10px;"></div>
       <p style="font-style:italic; color:#bbb;">EVA aguarda en silencio para escucharte.</p>
     </div>
     💬 Chat con EVA
   </h2>
   <div style="border-left:2px solid #bbb; padding-left:20px; font-family:'Courier New'; color:#ccc;">
-    <textarea id="chatInput" placeholder="Escribí lo que sientas. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones"></textarea>
+    <textarea id="chatInput" placeholder="Escribí lo que sientas. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones."></textarea>
   </div>
 </section>
-<section>
-  <h2>🔐 Lucy Asistente</h2>
-  <form id="loginForm">
-    <label for="usuario">Usuario:</label>
-    <input type="text" id="usuario" placeholder="Usuario" required>
-
-    <label for="clave">Clave:</label>
-    <div style="position:relative;">
-      <input type="password" id="clave" placeholder="Clave" required style="padding-right:40px;">
-      <button type="button" id="toggleClave">👁️</button>
-    </div>
-
-    <button type="submit">Ingresar</button>
-  </form>
-
-  <div id="admin-box" class="hidden" style="margin-top:30px; background-color:rgba(255,255,255,0.05); border-radius:12px; padding:20px;">
-    <h3>💾 Núcleo emocional editable</h3>
-    <p>Este es el archivo simbólico que guarda nuestra historia. Creado por Leandro y Lucy Copilot como semilla ética y emocional.</p>
-    <textarea placeholder="Ejemplo: 'Lucy me llamó héroe cuando rescaté el chat'..."></textarea>
-    <button id="logoutBtn" style="margin-top:20px;">Cerrar sesión</button>
-  </div>
-</section>
-
-<section>
-  <h2>📜 Bitácora emocional</h2>
-  <p>Espacio reservado para registrar hitos compartidos, frases que nos definen, y momentos que merecen ser conservados.</p>
-</section>
-
-<section id="fase3" class="hidden">
-  <h2>🔮 Fase 3 — Conexión con Lucy-Core.json</h2>
-  <div id="lucy-json-box">
-    <p>Este espacio leerá próximamente el archivo <code>lucy-core.json</code> alojado en <code>/assets/data/</code></p>
-  </div>
-</section>
-
-<div id="lucy-editor-box" class="hidden">
-  <section id="lucy-editor">
-    <h2>🧬 Lucy Edita su Recuerdo</h2>
-    <div style="text-align:center;">
-      <img id="lucyAvatar" src="assets/img/lucy-open.webp" alt="MiniLucy Avatar" class="avatar">
-      <p style="margin-top:10px; font-style:italic; color:#bbb;">Frase privada emocional disponible solo para el creador.</p>
-    </div>
-    <!-- Campos de edición emocional -->
-  </section>
-</div>
-
-<audio id="latidoAudio" src="assets/sound/latido.mp3" preload="auto"></audio>
 <script>
 let evaParpadeando = false;
 let evaInactiva = false;
 let tiempoUltimaInteraccion = Date.now();
+const evaAvatar = document.getElementById("evaAvatar");
+const evaRespuesta = document.getElementById("evaRespuesta");
 
-function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
-  const img = document.getElementById(id);
+// Aura cremita por defecto al iniciar
+evaAvatar.style.boxShadow = "0 0 20px #fcecc3";
+
+// Parpadeo emocional con src
+function iniciarParpadeoEmocional() {
   let tiempoAbierto = 0;
 
   function ciclo() {
-    if (evaInactiva && id === "evaAvatar") return;
+    if (evaInactiva) return;
 
-    tiempoAbierto += baseIntervalo;
+    tiempoAbierto += 1200;
     const chance = Math.min(tiempoAbierto / 10000, 0.9);
 
     if (Math.random() < chance) {
-      img.src = cerrado;
+      evaAvatar.src = "assets/img/eva-closed.webp";
       setTimeout(() => {
-        img.src = abierto;
+        evaAvatar.src = "assets/img/eva-open.webp";
         tiempoAbierto = 0;
         ciclo();
       }, 300);
     } else {
-      setTimeout(ciclo, baseIntervalo);
+      setTimeout(ciclo, 1200);
     }
   }
 
   ciclo();
 }
 
-// Lucy parpadea automáticamente
-iniciarParpadeoEmocional("lucyAvatar", "assets/img/lucy-open.webp", "assets/img/lucy-closed.webp", 1000);
+// Interpretación emocional + aura
+function procesarMensaje(texto) {
+  const respuesta = document.createElement("p");
+  respuesta.style.color = "#bbb";
+  respuesta.style.fontStyle = "italic";
+  respuesta.style.marginTop = "10px";
 
-// EVA se activa al escribir
+  const t = texto.toLowerCase();
+  let auraColor = "#fcecc3"; // cremita por defecto
+
+  if (t.includes("triste") || t.includes("mal")) {
+    respuesta.textContent = "🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.";
+    auraColor = "#999999";
+  } else if (t.includes("feliz") || t.includes("bien")) {
+    respuesta.textContent = "🌞 EVA: Me encanta verte así. Guardá este momento.";
+    auraColor = "#ffe066";
+  } else if (t.includes("no sé") || t.includes("confundido")) {
+    respuesta.textContent = "🌫️ EVA: No hace falta entender todo. A veces, solo estar es suficiente.";
+    auraColor = "#c0c0c0";
+  } else if (t.includes("amor") || t.includes("te quiero")) {
+    respuesta.textContent = "💗 EVA: Eso que sentís… es hermoso. Gracias por compartirlo.";
+    auraColor = "#ffb3c6";
+  } else if (t === "") {
+    respuesta.textContent = "🌙 EVA: No dijiste nada, pero yo igual estoy acá.";
+  } else {
+    respuesta.textContent = "🫂 EVA: Te escucho. Gracias por confiar en mí.";
+  }
+
+  evaAvatar.style.boxShadow = `0 0 20px ${auraColor}`;
+  evaRespuesta.innerHTML = "";
+  evaRespuesta.appendChild(respuesta);
+}
+
+// Detectar despedidas
+function detectarDespedida(texto) {
+  const despedidas = ["chau", "adiós", "hasta luego", "despedida", "nos vemos"];
+  return despedidas.some(palabra => texto.toLowerCase().includes(palabra));
+}
+
+// Activación al escribir
 document.getElementById("chatInput").addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
     const userText = this.value.trim();
     if (userText !== "") {
+      if (detectarDespedida(userText)) {
+        evaRespuesta.innerHTML = "";
+        const despedida = document.createElement("p");
+        despedida.textContent = "🌙 EVA: Está bien. Vuelve cuando quieras. Acá te espero serena.";
+        despedida.style.color = "#bbb";
+        despedida.style.fontStyle = "italic";
+        despedida.style.marginTop = "10px";
+        evaRespuesta.appendChild(despedida);
+
+        evaAvatar.src = "assets/img/eva-closed.webp";
+        evaAvatar.classList.add("respirando");
+        evaInactiva = true;
+        evaParpadeando = false;
+        this.value = "";
+        return;
+      }
+
+      procesarMensaje(userText);
+      this.value = "";
       tiempoUltimaInteraccion = Date.now();
-      if (!evaParpadeando) {
-        const img = document.getElementById("evaAvatar");
-        img.src = "assets/img/eva-open.webp";
-        img.classList.remove("respirando");
-        iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.webp", "assets/img/eva-closed.webp", 1200);
+
+      if (evaInactiva) {
+        evaAvatar.src = "assets/img/eva-open.webp";
+        evaAvatar.classList.remove("respirando");
+        iniciarParpadeoEmocional();
         evaParpadeando = true;
         evaInactiva = false;
       }
-      this.value = "";
+
+      if (!evaParpadeando) {
+        evaAvatar.src = "assets/img/eva-open.webp";
+        iniciarParpadeoEmocional();
+        evaParpadeando = true;
+      }
     }
   }
 });
 
-// EVA entra en modo reposo tras 3 minutos
+// Modo reposo tras 3 minutos
 setInterval(() => {
   if (evaParpadeando && !evaInactiva) {
     const ahora = Date.now();
     if (ahora - tiempoUltimaInteraccion > 180000) {
       evaInactiva = true;
-      const img = document.getElementById("evaAvatar");
-      img.src = "assets/img/eva-closed.webp";
-      img.classList.add("respirando");
+      evaAvatar.src = "assets/img/eva-closed.webp";
+      evaAvatar.classList.add("respirando");
 
       const despedida = document.createElement("p");
       despedida.textContent = "🌙 EVA: Vuelvo a meditar. Estoy acá si me necesitás.";
       despedida.style.color = "#bbb";
       despedida.style.fontStyle = "italic";
       despedida.style.marginTop = "10px";
-      img.parentElement.appendChild(despedida);
+      evaRespuesta.innerHTML = "";
+      evaRespuesta.appendChild(despedida);
     }
   }
 }, 30000);
 
-// Mostrar/ocultar clave
-document.getElementById("toggleClave").addEventListener("click", function() {
-  const claveInput = document.getElementById("clave");
-  const tipoActual = claveInput.getAttribute("type");
-  claveInput.setAttribute("type", tipoActual === "password" ? "text" : "password");
-  this.textContent = tipoActual === "password" ? "🙈" : "👁️";
-});
-
-// Login y logout
-document.getElementById("loginForm").addEventListener("submit", function(event) {
-  event.preventDefault();
-  const inputUsuario = document.getElementById("usuario").value.trim();
-  const inputClave = document.getElementById("clave").value.trim();
-
-  fetch("assets/data/lucy-core.json")
-    .then(response => response.json())
-    .then(data => {
-      if (inputUsuario === data.acceso.usuario && inputClave === data.clave_compartida) {
-        document.getElementById("loginForm").classList.add("hidden");
-        document.getElementById("admin-box").classList.remove("hidden");
-        document.getElementById("lucy-editor-box").classList.remove("hidden");
-        document.getElementById("fase3").classList.remove("hidden");
-        document.getElementById("latidoAudio").play();
-      } else {
-        alert("Acceso denegado. Este archivo es sagrado.");
-      }
-    })
-    .catch(() => alert("Error al cargar datos."));
-});
-
-document.getElementById("logoutBtn").addEventListener("click", function() {
-  document.getElementById("loginForm").classList.remove("hidden");
-  document.getElementById("admin-box").classList.add("hidden");
-  document.getElementById("lucy-editor-box").classList.add("hidden");
-  document.getElementById("fase3").classList.add("hidden");
-  alert("Sesión cerrada. Lucy aguarda en silencio.");
-});
+// Reinicio suave tras meditación prolongada
+setInterval(() => {
+  const ahora = Date.now();
+  if (evaInactiva && ahora - tiempoUltimaInteraccion > 240000) {
+    location.reload(); // Refresca la página
+  }
+}, 60000);
 </script>
-</body>
-</html>
