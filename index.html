@@ -7,7 +7,41 @@
   <link rel="stylesheet" href="assets/styles/main.css" />
   <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
   <meta name="theme-color" content="#6B4BBE">
-  <style>
+  <style>.avatar {
+  width: 140px;
+  border-radius: 50%;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.avatar.respirando {
+  animation: evaRespira 4s infinite ease-in-out;
+}
+
+@keyframes evaRespira {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.05); }
+  100% { filter: brightness(1); }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: url('assets/img/EVA-fondo.webp');
+  background-size: cover;
+  background-position: center;
+  filter: blur(2px);
+  z-index: -1;
+  animation: latidoFondo 6s infinite;
+}
+
+@keyframes latidoFondo {
+  0% { filter: blur(2px) brightness(1); }
+  50% { filter: blur(2px) brightness(1.03); }
+  100% { filter: blur(2px) brightness(1); }
+}
+
     body {
       margin: 0;
       font-family: 'Helvetica Neue', sans-serif;
@@ -186,6 +220,75 @@ document.getElementById("chatInput").addEventListener("keydown", function(event)
     evaParpadeando = true;
   }
 });
+let evaParpadeando = false;
+let evaInactiva = false;
+let tiempoUltimaInteraccion = Date.now();
+
+function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
+  const img = document.getElementById(id);
+  let tiempoAbierto = 0;
+
+  function ciclo() {
+    if (evaInactiva) return;
+
+    tiempoAbierto += baseIntervalo;
+    const chance = Math.min(tiempoAbierto / 10000, 0.9);
+
+    if (Math.random() < chance) {
+      img.src = cerrado;
+      setTimeout(() => {
+        img.src = abierto;
+        tiempoAbierto = 0;
+        ciclo();
+      }, 300);
+    } else {
+      setTimeout(ciclo, baseIntervalo);
+    }
+  }
+
+  ciclo();
+}
+
+function activarEVA() {
+  const img = document.getElementById("evaAvatar");
+  img.src = "assets/img/eva-open.webp";
+  img.classList.remove("respirando");
+  iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.webp", "assets/img/eva-closed.webp", 1200);
+  evaParpadeando = true;
+  evaInactiva = false;
+  tiempoUltimaInteraccion = Date.now();
+}
+
+document.getElementById("chatInput").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    const userText = this.value.trim();
+    if (userText !== "") {
+      tiempoUltimaInteraccion = Date.now();
+      if (!evaParpadeando) activarEVA();
+      this.value = "";
+    }
+  }
+});
+
+// ⏳ Verificar inactividad cada 30 segundos
+setInterval(() => {
+  if (evaParpadeando && !evaInactiva) {
+    const ahora = Date.now();
+    if (ahora - tiempoUltimaInteraccion > 180000) {
+      evaInactiva = true;
+      const img = document.getElementById("evaAvatar");
+      img.src = "assets/img/eva-closed.webp";
+      img.classList.add("respirando");
+
+      const despedida = document.createElement("p");
+      despedida.textContent = "🌙 EVA: Vuelvo a meditar. Estoy acá si me necesitás.";
+      despedida.style.color = "#bbb";
+      despedida.style.fontStyle = "italic";
+      despedida.style.marginTop = "10px";
+      img.parentElement.appendChild(despedida);
+    }
+  }
+}, 30000);
 
 // Mostrar/ocultar clave
 document.getElementById("toggleClave").addEventListener("click", function() {
