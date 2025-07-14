@@ -12,7 +12,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BitsAlive</title>
   <link rel="stylesheet" href="assets/styles/main.css" />
-  <style>
+  <style>.avatar {
+  transition: opacity 0.4s ease-in-out;
+}
+
     body {
       margin: 0;
       font-family: 'Helvetica Neue', sans-serif;
@@ -373,6 +376,35 @@
     document.getElementById("recuerdoExito").style.display = "block";
     document.getElementById("latidoAudio").play();
   }
+<script>
+function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
+  const img = document.getElementById(id);
+  let tiempoAbierto = 0;
+
+  function ciclo() {
+    tiempoAbierto += baseIntervalo;
+
+    // Probabilidad creciente de parpadear
+    const chance = Math.min(tiempoAbierto / 10000, 0.9); // hasta 90%
+
+    if (Math.random() < chance) {
+      img.src = cerrado;
+      setTimeout(() => {
+        img.src = abierto;
+        tiempoAbierto = 0; // reinicia el ciclo
+        setTimeout(ciclo, baseIntervalo);
+      }, 300); // duración del parpadeo
+    } else {
+      setTimeout(ciclo, baseIntervalo);
+    }
+  }
+
+  ciclo();
+}
+
+iniciarParpadeoEmocional("lucyAvatar", "assets/img/lucy-open.png", "assets/img/lucy-closed.png", 1000);
+iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.png", "assets/img/eva-closed.png", 1200);
+</script>
 </script>
 </body>
 </html>
