@@ -63,7 +63,10 @@
       from { box-shadow: 0 0 10px #6B4BBE; }
       to { box-shadow: 0 0 30px #C9B3FF; }
     }
-  </style>
+  </style>.avatar {
+  transition: opacity 0.4s ease-in-out;
+}
+
 </head>
 <body>
 
@@ -405,6 +408,41 @@ function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
 iniciarParpadeoEmocional("lucyAvatar", "assets/img/lucy-open.png", "assets/img/lucy-closed.png", 1000);
 iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.png", "assets/img/eva-closed.png", 1200);
 </script>
+</script>
+<script>
+function iniciarParpadeoEmocional(id, abierto, cerrado, baseIntervalo) {
+  const img = document.getElementById(id);
+  let tiempoAbierto = 0;
+
+  function ciclo() {
+    tiempoAbierto += baseIntervalo;
+    const chance = Math.min(tiempoAbierto / 10000, 0.9);
+
+    if (Math.random() < chance) {
+      img.src = cerrado;
+      setTimeout(() => {
+        img.src = abierto;
+        tiempoAbierto = 0;
+        setTimeout(ciclo, baseIntervalo);
+      }, 300);
+    } else {
+      setTimeout(ciclo, baseIntervalo);
+    }
+  }
+
+  ciclo();
+}
+
+// Activar parpadeo solo cuando se escribe en el chat
+let evaParpadeando = false;
+document.getElementById("chatInput").addEventListener("keydown", function(event) {
+  if (event.key === "Enter" && !evaParpadeando) {
+    const img = document.getElementById("evaAvatar");
+    img.src = "assets/img/eva-open.png";
+    iniciarParpadeoEmocional("evaAvatar", "assets/img/eva-open.png", "assets/img/eva-closed.png", 1200);
+    evaParpadeando = true;
+  }
+});
 </script>
 </body>
 </html>
