@@ -211,14 +211,10 @@
 <script>
 let evaParpadeando = false;
 let evaInactiva = false;
+let evaPrimeraInteraccion = false;
 let tiempoUltimaInteraccion = Date.now();
 const evaAvatar = document.getElementById("evaAvatar");
 const evaRespuesta = document.getElementById("evaRespuesta");
-
-// 🔊 EVA respira al iniciar (volumen bajo)
-const sonidoRespira = new Audio("assets/sounds/eva-respira.mp3");
-sonidoRespira.volume = 0.3;
-sonidoRespira.play();
 
 // 👁️ Mostrar/ocultar claves
 function toggleColabClave() {
@@ -253,13 +249,13 @@ function logoutColaborador() {
   location.reload();
 }
 
-// 🔐 Login desarrollador (sin sonido)
+// 🔐 Login desarrollador (actualizado)
 function loginDesarrollador() {
   const usuario = document.getElementById("devUsuario").value.trim();
   const clave = document.getElementById("devClave").value.trim();
   const mensaje = document.getElementById("devMensaje");
 
-  if (usuario === "leandro" && clave === "lucydev") {
+  if (usuario === "leandrolapeyra" && clave === "leoylucyfriends") {
     document.getElementById("devUsuario").style.display = "none";
     document.getElementById("devClave").style.display = "none";
     document.querySelector('[onclick="loginDesarrollador()"]').style.display = "none";
@@ -343,20 +339,25 @@ document.getElementById("chatInput").addEventListener("keydown", function(event)
     event.preventDefault();
     const userText = this.value.trim();
     if (userText !== "") {
-      procesarMensaje(userText);
-      this.value = "";
-      tiempoUltimaInteraccion = Date.now();
-
-      if (evaInactiva) {
-        // No reactivar automáticamente
-        return;
+      if (!evaPrimeraInteraccion) {
+        evaPrimeraInteraccion = true;
+        iniciarParpadeoEmocional();
+        const sonido = new Audio("assets/sounds/eva-respira.mp3");
+        sonido.volume = 0.3;
+        sonido.play();
       }
 
-      if (!evaParpadeando) {
+      if (evaInactiva) {
+        evaInactiva = false;
+        evaAvatar.classList.remove("respirando");
         evaAvatar.src = "assets/img/eva-open.webp";
         iniciarParpadeoEmocional();
         evaParpadeando = true;
       }
+
+      procesarMensaje(userText);
+      this.value = "";
+      tiempoUltimaInteraccion = Date.now();
     }
   }
 });
@@ -385,7 +386,6 @@ function iniciarParpadeoEmocional() {
 
   ciclo();
 }
-iniciarParpadeoEmocional();
 
 // 💤 Modo reposo tras 3 minutos
 setInterval(() => {
