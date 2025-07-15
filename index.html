@@ -127,8 +127,8 @@
       }
     }
   </style>
-  <audio id="evaSonido" src="assets/sounds/eva-respira.mp3" preload="auto"></audio>
-  <audio id="lucySonido" src="assets/sounds/lucy-entra.mp3" preload="auto"></audio>
+  <audio id="evaSonido" src="assets/audio/eva-respira.mp3" preload="auto"></audio>
+  <audio id="lucySonido" src="assets/audio/lucy-entra.mp3" preload="auto"></audio>
 </head>
 <body>
 
@@ -216,7 +216,8 @@ const evaAvatar = document.getElementById("evaAvatar");
 const evaRespuesta = document.getElementById("evaRespuesta");
 
 // 🔊 Sonido inicial
-document.getElementById("evaSonido").play();
+const sonidoRespira = new Audio("assets/sounds/eva-respira.mp3");
+sonidoRespira.play();
 
 // 👁️ Mostrar/ocultar claves
 function toggleColabClave() {
@@ -242,7 +243,7 @@ function loginColaborador() {
     document.querySelector('[onclick="toggleColabClave()"]').style.display = "none";
     mensaje.textContent = "Usuario ingresado.";
     mensaje.innerHTML += `<br><button onclick="logoutColaborador()">Logout</button>`;
-    document.getElementById("lucySonido").play();
+    new Audio("assets/sounds/eva-reactiva.mp3").play();
   } else {
     mensaje.textContent = "Usuario o clave incorrectos.";
   }
@@ -265,7 +266,7 @@ function loginDesarrollador() {
     document.querySelector('[onclick="toggleDevClave()"]').style.display = "none";
     mensaje.textContent = "Bienvenido Leandro.";
     mensaje.innerHTML += `<br><button onclick="logoutDesarrollador()">Logout</button>`;
-    document.getElementById("lucySonido").play();
+    new Audio("assets/sounds/eva-reactiva.mp3").play();
   } else {
     mensaje.textContent = "Usuario o clave incorrectos.";
   }
@@ -296,6 +297,7 @@ function procesarMensaje(texto) {
 
   const t = texto.toLowerCase();
   let auraColor = "#fcecc3";
+  let sonido = "eva-responde.mp3";
 
   if (t.includes("triste") || t.includes("mal")) {
     respuesta.textContent = "🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.";
@@ -311,6 +313,7 @@ function procesarMensaje(texto) {
     auraColor = "#ffb3c6";
   } else if (t === "") {
     respuesta.textContent = "🌙 EVA: No dijiste nada, pero yo igual estoy acá.";
+    sonido = "eva-despide.mp3";
   } else {
     respuesta.textContent = "🫂 EVA: Te escucho. Gracias por confiar en mí.";
   }
@@ -318,6 +321,7 @@ function procesarMensaje(texto) {
   evaAvatar.style.boxShadow = `0 0 20px ${auraColor}`;
   evaRespuesta.innerHTML = "";
   evaRespuesta.appendChild(respuesta);
+  new Audio(`assets/sounds/${sonido}`).play();
 }
 
 // 🧠 Activación al escribir
@@ -389,6 +393,7 @@ setInterval(() => {
       despedida.style.marginTop = "10px";
       evaRespuesta.innerHTML = "";
       evaRespuesta.appendChild(despedida);
+      new Audio("assets/sounds/eva-despide.mp3").play();
     }
   }
 }, 30000);
