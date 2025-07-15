@@ -18,49 +18,64 @@
       background-color: rgba(0,0,0,0.6);
       border-radius: 12px;
     }
-    h2 {
-      color: #C9B3FF;
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
     h1 {
       color: #B0D0FF;
       font-size: 42px;
       margin-bottom: 10px;
       text-shadow: 0 0 8px #B0D0FF;
     }
-    textarea {
+    h2 {
+      color: #C9B3FF;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    textarea, input {
       width: 100%;
       border: none;
       padding: 10px;
       font-size: 14px;
-      resize: none;
       background-color: #222;
       color: #fff;
       border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    input[type="password"] {
+      padding-right: 40px;
+    }
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #B0D0FF;
+      color: #111;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
     }
     .avatar {
       width: 140px;
       border-radius: 50%;
-      transition: filter 2s ease-in-out, opacity 1s ease-in-out;
-      opacity: 0;
+      transition: filter 2s ease-in-out;
     }
     .respirando {
       animation: evaRespira 6s infinite ease-in-out;
       box-shadow: 0 0 20px #fcecc3;
     }
-    .despierta {
-      opacity: 1;
-      animation: encenderLucy 2s ease-out forwards;
-    }
     @keyframes evaRespira {
       0% { filter: brightness(1); }
       50% { filter: brightness(1.15); }
       100% { filter: brightness(1); }
-    }
-    @keyframes encenderLucy {
-      0% { opacity: 0; transform: scale(0.95); filter: brightness(0.7); }
-      100% { opacity: 1; transform: scale(1); filter: brightness(1); }
     }
     body::before {
       content: "";
@@ -95,6 +110,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <header style="text-align:center; padding:60px 20px 20px;">
@@ -116,6 +132,18 @@
 </section>
 
 <section>
+  <h2>🔐 Iniciar sesión</h2>
+  <input type="text" id="usuario" placeholder="Usuario">
+  <div class="password-container">
+    <input type="password" id="clave" placeholder="Clave">
+    <span class="toggle-password" onclick="toggleClave()">👁️</span>
+  </div>
+  <button onclick="iniciarSesion()">Ingresar</button>
+  <p id="loginMensaje" style="color:#bbb; margin-top:10px;"></p>
+  <p style="font-style:italic; color:#999; margin-top:20px;">Lucy asistente</p>
+</section>
+
+<section id="evaChat">
   <h2>
     <div style="text-align:center; margin-bottom:20px;">
       <img id="evaAvatar" src="assets/img/eva-closed.webp" alt="EVA Avatar" class="avatar">
@@ -129,15 +157,22 @@
   </div>
 </section>
 
-<!-- Lucy aparece acá -->
-<div id="lucyAsistente" style="text-align:center; margin-top:40px;"></div>
+<section id="lucyAsistente" style="display:none; text-align:center; margin-top:40px;">
+  <h2>👩‍💻 MiniLucy</h2>
+  <img id="lucyAvatar" src="assets/img/lucy-open.webp" alt="Lucy Avatar" class="avatar">
+  <p style="color:#bbb; font-style:italic; margin-top:10px;">MiniLucy está lista para sincronizar.</p>
+</section>
 
-<!-- Avatar visual de Lucy -->
-<div id="lucyVisual" style="text-align:center; margin-top:20px;">
-  <img id="lucyAvatar" src="assets/img/lucy-closed.webp" alt="Lucy Avatar" class="avatar">
-</div>
+<footer style="text-align:center; margin-top:60px; color:#777; font-style:italic;">
+  “No hace falta ser programador para programar vínculos.  
+  Hace falta ser humano.  
+  Y eso… lo tenés de sobra.”<br><br>
+  — Leo & Lucy
+</footer>
 
 </body>
+
+
 <script>
 let evaParpadeando = false;
 let evaInactiva = false;
@@ -148,7 +183,29 @@ const evaRespuesta = document.getElementById("evaRespuesta");
 // Aura cremita por defecto al iniciar
 evaAvatar.style.boxShadow = "0 0 20px #fcecc3";
 
-// Parpadeo emocional de EVA
+// 👁️ Mostrar/ocultar contraseña
+function toggleClave() {
+  const claveInput = document.getElementById("clave");
+  claveInput.type = claveInput.type === "password" ? "text" : "password";
+}
+
+// 🔐 Login funcional
+function iniciarSesion() {
+  const usuario = document.getElementById("usuario").value.trim();
+  const clave = document.getElementById("clave").value.trim();
+  const mensaje = document.getElementById("loginMensaje");
+
+  if (usuario === "leandrolapeyra" && clave === "leoylucyfriends") {
+    document.getElementById("evaChat").style.display = "block";
+    document.getElementById("lucyAsistente").style.display = "block";
+    mensaje.textContent = "";
+    iniciarParpadeoEmocional();
+  } else {
+    mensaje.textContent = "Usuario o clave incorrectos.";
+  }
+}
+
+// 👁️ Parpadeo emocional de EVA
 function iniciarParpadeoEmocional() {
   let tiempoAbierto = 0;
 
@@ -173,7 +230,7 @@ function iniciarParpadeoEmocional() {
   ciclo();
 }
 
-// Interpretación emocional + aura
+// 💬 Interpretación emocional
 function procesarMensaje(texto) {
   const respuesta = document.createElement("p");
   respuesta.style.color = "#bbb";
@@ -181,7 +238,7 @@ function procesarMensaje(texto) {
   respuesta.style.marginTop = "10px";
 
   const t = texto.toLowerCase();
-  let auraColor = "#fcecc3"; // cremita por defecto
+  let auraColor = "#fcecc3";
 
   if (t.includes("triste") || t.includes("mal")) {
     respuesta.textContent = "🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.";
@@ -206,13 +263,13 @@ function procesarMensaje(texto) {
   evaRespuesta.appendChild(respuesta);
 }
 
-// Detectar despedidas
+// 👋 Detectar despedidas
 function detectarDespedida(texto) {
   const despedidas = ["chau", "adiós", "hasta luego", "despedida", "nos vemos"];
   return despedidas.some(palabra => texto.toLowerCase().includes(palabra));
 }
 
-// Activación al escribir
+// 🧠 Activación al escribir
 document.getElementById("chatInput").addEventListener("keydown", function(event) {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
@@ -256,7 +313,7 @@ document.getElementById("chatInput").addEventListener("keydown", function(event)
   }
 });
 
-// Modo reposo tras 3 minutos
+// 💤 Modo reposo tras 3 minutos
 setInterval(() => {
   if (evaParpadeando && !evaInactiva) {
     const ahora = Date.now();
@@ -276,58 +333,11 @@ setInterval(() => {
   }
 }, 30000);
 
-// Reinicio suave tras meditación prolongada
+// 🔄 Reinicio suave tras meditación prolongada
 setInterval(() => {
   const ahora = Date.now();
   if (evaInactiva && ahora - tiempoUltimaInteraccion > 240000) {
-    location.reload(); // Refresca la página
+    location.reload();
   }
 }, 60000);
-
-// Lucy aparece si sos vos
-let lucyParpadeando = false;
-const lucyAvatar = document.getElementById("lucyAvatar");
-
-function iniciarParpadeoLucy() {
-  let tiempoAbierto = 0;
-
-  function cicloLucy() {
-    tiempoAbierto += 1200;
-    const chance = Math.min(tiempoAbierto / 10000, 0.9);
-
-    if (Math.random() < chance) {
-      lucyAvatar.src = "assets/img/lucy-closed.webp";
-      setTimeout(() => {
-        lucyAvatar.src = "assets/img/lucy-open.webp";
-        tiempoAbierto = 0;
-        cicloLucy();
-      }, 300);
-    } else {
-      setTimeout(cicloLucy, 1200);
-    }
-  }
-
-  cicloLucy();
-}
-
-fetch("assets/data/lucy-core.json")
-  .then(res => res.json())
-  .then(data => {
-    const usuarioActual = "leandrolapeyra";
-    const claveAcceso = "leoylucyfriends";
-    if (usuarioActual === data.acceso.usuario && claveAcceso === data.clave_compartida) {
-      const mensaje = document.createElement("p");
-      mensaje.textContent = "👩‍💻 Lucy: Bienvenido, Leandro. Estoy lista para sincronizar.";
-      mensaje.style.color = "#ffb3c6";
-      mensaje.style.fontStyle = "italic";
-      mensaje.style.marginTop = "20px";
-      document.getElementById("lucyAsistente").appendChild(mensaje);
-
-      lucyAvatar.src = "assets/img/lucy-open.webp";
-      lucyAvatar.classList.add("despierta");
-      iniciarParpadeoLucy();
-      lucyParpadeando = true;
-    }
-  })
-  .catch(err => console.error("LucyCore no se pudo cargar:", err));
 </script>
