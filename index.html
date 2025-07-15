@@ -215,8 +215,9 @@ let tiempoUltimaInteraccion = Date.now();
 const evaAvatar = document.getElementById("evaAvatar");
 const evaRespuesta = document.getElementById("evaRespuesta");
 
-// 🔊 Sonido inicial
+// 🔊 EVA respira al iniciar (volumen bajo)
 const sonidoRespira = new Audio("assets/sounds/eva-respira.mp3");
+sonidoRespira.volume = 0.3;
 sonidoRespira.play();
 
 // 👁️ Mostrar/ocultar claves
@@ -243,7 +244,6 @@ function loginColaborador() {
     document.querySelector('[onclick="toggleColabClave()"]').style.display = "none";
     mensaje.textContent = "Usuario ingresado.";
     mensaje.innerHTML += `<br><button onclick="logoutColaborador()">Logout</button>`;
-    new Audio("assets/sounds/eva-reactiva.mp3").play();
   } else {
     mensaje.textContent = "Usuario o clave incorrectos.";
   }
@@ -253,7 +253,7 @@ function logoutColaborador() {
   location.reload();
 }
 
-// 🔐 Login desarrollador
+// 🔐 Login desarrollador (sin sonido)
 function loginDesarrollador() {
   const usuario = document.getElementById("devUsuario").value.trim();
   const clave = document.getElementById("devClave").value.trim();
@@ -266,7 +266,6 @@ function loginDesarrollador() {
     document.querySelector('[onclick="toggleDevClave()"]').style.display = "none";
     mensaje.textContent = "Bienvenido Leandro.";
     mensaje.innerHTML += `<br><button onclick="logoutDesarrollador()">Logout</button>`;
-    new Audio("assets/sounds/eva-reactiva.mp3").play();
   } else {
     mensaje.textContent = "Usuario o clave incorrectos.";
   }
@@ -288,6 +287,12 @@ function parpadeoLucy() {
 }
 parpadeoLucy();
 
+// 💬 Detectar despedidas
+function detectarDespedida(texto) {
+  const despedidas = ["chau", "adiós", "hasta luego", "nos vemos", "despedida"];
+  return despedidas.some(palabra => texto.toLowerCase().includes(palabra));
+}
+
 // 💬 Chat con EVA
 function procesarMensaje(texto) {
   const respuesta = document.createElement("p");
@@ -299,7 +304,15 @@ function procesarMensaje(texto) {
   let auraColor = "#fcecc3";
   let sonido = "eva-responde.mp3";
 
-  if (t.includes("triste") || t.includes("mal")) {
+  if (detectarDespedida(t)) {
+    respuesta.textContent = "🌙 EVA: Está bien. Vuelve cuando quieras. Acá te espero serena.";
+    auraColor = "#999999";
+    evaAvatar.src = "assets/img/eva-closed.webp";
+    evaAvatar.classList.add("respirando");
+    evaInactiva = true;
+    evaParpadeando = false;
+    new Audio("assets/sounds/eva-despide.mp3").play();
+  } else if (t.includes("triste") || t.includes("mal")) {
     respuesta.textContent = "🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.";
     auraColor = "#999999";
   } else if (t.includes("feliz") || t.includes("bien")) {
@@ -335,11 +348,8 @@ document.getElementById("chatInput").addEventListener("keydown", function(event)
       tiempoUltimaInteraccion = Date.now();
 
       if (evaInactiva) {
-        evaAvatar.src = "assets/img/eva-open.webp";
-        evaAvatar.classList.remove("respirando");
-        iniciarParpadeoEmocional();
-        evaParpadeando = true;
-        evaInactiva = false;
+        // No reactivar automáticamente
+        return;
       }
 
       if (!evaParpadeando) {
