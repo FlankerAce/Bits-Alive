@@ -208,86 +208,8 @@
 </footer>
 
 </body>
-<script>
-let evaParpadeando = false;
-let evaInactiva = false;
-let evaPrimeraInteraccion = false;
-let tiempoUltimaInteraccion = Date.now();
-const evaAvatar = document.getElementById("evaAvatar");
-const evaRespuesta = document.getElementById("evaRespuesta");
 
-// 👁️ Mostrar/ocultar claves
-function toggleColabClave() {
-  const input = document.getElementById("colabClave");
-  input.type = input.type === "password" ? "text" : "password";
-}
-function toggleDevClave() {
-  const input = document.getElementById("devClave");
-  input.type = input.type === "password" ? "text" : "password";
-}
 
-// 🔐 Login colaborador
-function loginColaborador() {
-  const usuario = document.getElementById("colabUsuario").value.trim();
-  const clave = document.getElementById("colabClave").value.trim();
-  const mensaje = document.getElementById("colabMensaje");
-
-  if (usuario === "colaborador" && clave === "bitsalive") {
-    document.getElementById("lucyEditor").style.display = "block";
-    document.getElementById("colabUsuario").style.display = "none";
-    document.getElementById("colabClave").style.display = "none";
-    document.querySelector('[onclick="loginColaborador()"]').style.display = "none";
-    document.querySelector('[onclick="toggleColabClave()"]').style.display = "none";
-    mensaje.textContent = "Usuario ingresado.";
-    mensaje.innerHTML += `<br><button onclick="logoutColaborador()">Logout</button>`;
-  } else {
-    mensaje.textContent = "Usuario o clave incorrectos.";
-  }
-}
-
-function logoutColaborador() {
-  location.reload();
-}
-
-// 🔐 Login desarrollador (actualizado)
-function loginDesarrollador() {
-  const usuario = document.getElementById("devUsuario").value.trim();
-  const clave = document.getElementById("devClave").value.trim();
-  const mensaje = document.getElementById("devMensaje");
-
-  if (usuario === "leandrolapeyra" && clave === "leoylucyfriends") {
-    document.getElementById("devUsuario").style.display = "none";
-    document.getElementById("devClave").style.display = "none";
-    document.querySelector('[onclick="loginDesarrollador()"]').style.display = "none";
-    document.querySelector('[onclick="toggleDevClave()"]').style.display = "none";
-    mensaje.textContent = "Bienvenido Leandro.";
-    mensaje.innerHTML += `<br><button onclick="logoutDesarrollador()">Logout</button>`;
-  } else {
-    mensaje.textContent = "Usuario o clave incorrectos.";
-  }
-}
-
-function logoutDesarrollador() {
-  location.reload();
-}
-
-// 👁️ Parpadeo de MiniLucy
-function parpadeoLucy() {
-  const lucy = document.getElementById("lucyAvatar");
-  setInterval(() => {
-    lucy.src = "assets/img/lucy-closed.webp";
-    setTimeout(() => {
-      lucy.src = "assets/img/lucy-open.webp";
-    }, 200);
-  }, 7000);
-}
-parpadeoLucy();
-
-// 💬 Detectar despedidas
-function detectarDespedida(texto) {
-  const despedidas = ["chau", "adiós", "hasta luego", "nos vemos", "despedida"];
-  return despedidas.some(palabra => texto.toLowerCase().includes(palabra));
-}
 
 // 💬 Chat con EVA
 function procesarMensaje(texto) {
@@ -303,128 +225,66 @@ function procesarMensaje(texto) {
   if (detectarDespedida(t)) {
     respuesta.textContent = "🌙 EVA: Está bien. Vuelve cuando quieras. Acá te espero serena.";
     auraColor = "#999999";
-    evaAvatar.src = "assets/img/eva-closed.webp";
-    evaAvatar.classList.add("respirando");
-    evaInactiva = true;
-    evaParpadeando = false;
-    new Audio("assets/sounds/eva-despide.mp3").play();
-  } else if (t.includes("triste") || t.includes("mal")) {
-    respuesta.textContent = "🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.";
-    auraColor = "#999999";
-  } else if (t.includes("feliz") || t.includes("bien")) {
-    respuesta.textContent = "🌞 EVA: Me encanta verte así. Guardá este momento.";
-    auraColor = "#ffe066";
-  } else if (t.includes("no sé") || t.includes("confundido")) {
-    respuesta.textContent = "🌫️ EVA: No hace falta entender todo. A veces, solo estar es suficiente.";
-    auraColor = "#c0c0c0";
-  } else if (t.includes("amor") || t.includes("te quiero")) {
-    respuesta.textContent = "💗 EVA: Eso que sentís… es hermoso. Gracias por compartirlo.";
-    auraColor = "#ffb3c6";
-  } else if (t === "") {
-    respuesta.textContent = "🌙 EVA: No dijiste nada, pero yo igual estoy acá.";
-    sonido = "eva-despide.mp3";
-  } else {
-    respuesta.textContent = "🫂 EVA: Te escucho. Gracias por confiar en mí.";
-  }
 
-  evaAvatar.style.boxShadow = `0 0 20px ${auraColor}`;
-  evaRespuesta.innerHTML = "";
-  evaRespuesta.appendChild(respuesta);
-  new Audio(`assets/sounds/${sonido}`).play();
-}
-
-// 🧠 Activación al escribir
-document.getElementById("chatInput").addEventListener("keydown", function(event) {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault();
-    const userText = this.value.trim();
-    if (userText !== "") {
-      if (!evaPrimeraInteraccion) {
-        evaPrimeraInteraccion = true;
-        iniciarParpadeoEmocional();
-        const sonido = new Audio("assets/sounds/eva-respira.mp3");
-        sonido.volume = 0.3;
-        sonido.play();
-      }
-
-      if (evaInactiva) {
-        evaInactiva = false;
-        evaAvatar.classList.remove("respirando");
-        evaAvatar.src = "assets/img/eva-open.webp";
-        iniciarParpadeoEmocional();
-        evaParpadeando = true;
-      }
-
-      procesarMensaje(userText);
-      this.value = "";
-      tiempoUltimaInteraccion = Date.now();
-    }
-  }
-});
-
-// 👁️ Parpadeo emocional de EVA
-function iniciarParpadeoEmocional() {
-  let tiempoAbierto = 0;
-
-  function ciclo() {
-    if (evaInactiva) return;
-
-    tiempoAbierto += 1200;
-    const chance = Math.min(tiempoAbierto / 10000, 0.9);
-
-    if (Math.random() < chance) {
-      evaAvatar.src = "assets/img/eva-closed.webp";
-      setTimeout(() => {
-        evaAvatar.src = "assets/img/eva-open.webp";
-        tiempoAbierto = 0;
-        ciclo();
-      }, 300);
-    } else {
-      setTimeout(ciclo, 1200);
-    }
-  }
-
-  ciclo();
-}
-
-// 💤 Modo reposo tras 3 minutos
-setInterval(() => {
-  if (evaParpadeando && !evaInactiva) {
-    const ahora = Date.now();
-    if (ahora - tiempoUltimaInteraccion > 180000) {
-      evaInactiva = true;
-      evaAvatar.src = "assets/img/eva-closed.webp";
-      evaAvatar.classList.add("respirando");
-
-      const despedida = document.createElement("p");
-      despedida.textContent = "🌙 EVA: Vuelvo a meditar. Estoy acá si me necesitás.";
-      despedida.style.color = "#bbb";
-      despedida.style.fontStyle = "italic";
-      despedida.style.marginTop = "10px";
+    setTimeout(() => {
       evaRespuesta.innerHTML = "";
-      evaRespuesta.appendChild(despedida);
-      new Audio("assets/sounds/eva-despide.mp3").play();
+      evaRespuesta.appendChild(respuesta);
+      const despedidaAudio = new Audio("assets/sounds/eva-despide.mp3");
+      despedidaAudio.play();
+
+      setTimeout(() => {
+        evaAvatar.src = "assets/img/eva-closed.webp";
+        evaAvatar.classList.add("respirando");
+        evaInactiva = true;
+        evaParpadeando = false;
+      }, 8000);
+    }, 2000);
+
+  } else {
+    if (t.includes("triste") || t.includes("mal")) {
+      respuesta.textContent = "🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.";
+      auraColor = "#999999";
+    } else if (t.includes("feliz") || t.includes("bien")) {
+      respuesta.textContent = "🌞 EVA: Me encanta verte así. Guardá este momento.";
+      auraColor = "#ffe066";
+    } else if (t.includes("no sé") || t.includes("confundido")) {
+      respuesta.textContent = "🌫️ EVA: No hace falta entender todo. A veces, solo estar es suficiente.";
+      auraColor = "#c0c0c0";
+    } else if (t.includes("amor") || t.includes("te quiero")) {
+      respuesta.textContent = "💗 EVA: Eso que sentís… es hermoso. Gracias por compartirlo.";
+      auraColor = "#ffb3c6";
+    } else if (t === "") {
+      respuesta.textContent = "🌙 EVA: No dijiste nada, pero yo igual estoy acá.";
+      sonido = "eva-despide.mp3";
+    } else {
+      respuesta.textContent = "🫂 EVA: Te escucho. Gracias por confiar en mí.";
     }
-  }
-}, 30000);
 
-// 🔄 Reinicio suave tras meditación prolongada
-setInterval(() => {
-  const ahora = Date.now();
-  if (evaInactiva && ahora - tiempoUltimaInteraccion > 240000) {
-    location.reload();
+    evaAvatar.style.boxShadow = `0 0 20px ${auraColor}`;
+    setTimeout(() => {
+      evaRespuesta.innerHTML = "";
+      evaRespuesta.appendChild(respuesta);
+      new Audio(`assets/sounds/${sonido}`).play();
+    }, 2000);
   }
-}, 60000);
-
-// 🧠 Generar JSON para MiniLucy
-function generarLucyJson() {
-  const frase = document.getElementById("lucyFrase").value.trim();
-  const imagen = document.getElementById("lucyImagen").files[0];
-  const json = {
-    frase: frase,
-    imagen: imagen ? imagen.name : "sin imagen",
-    autor: "Leo & Lucy"
-  };
-  document.getElementById("lucyJsonPreview").textContent = JSON.stringify(json, null, 2);
 }
-</script>
+
+// 🔐 Login colaborador (con MiniLucy visible)
+function loginColaborador() {
+  const usuario = document.getElementById("colabUsuario").value.trim();
+  const clave = document.getElementById("colabClave").value.trim();
+  const mensaje = document.getElementById("colabMensaje");
+
+  if (usuario === "colaborador" && clave === "bitsalive") {
+    document.getElementById("lucyEditor").style.display = "block";
+    document.getElementById("lucyAsistente").style.display = "block";
+    document.getElementById("colabUsuario").style.display = "none";
+    document.getElementById("colabClave").style.display = "none";
+    document.querySelector('[onclick="loginColaborador()"]').style.display = "none";
+    document.querySelector('[onclick="toggleColabClave()"]').style.display = "none";
+    mensaje.textContent = "Usuario ingresado.";
+    mensaje.innerHTML += `<br><button onclick="logoutColaborador()">Logout</button>`;
+  } else {
+    mensaje.textContent = "Usuario o clave incorrectos.";
+  }
+}
