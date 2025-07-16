@@ -5,19 +5,49 @@
   <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
   <meta name="theme-color" content="#B0D0FF">
   <style>
-    /* ... todo tu CSS original intacto ... */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('assets/images/EVA-fondo.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #ccc;
+    }
+    #eva-avatar {
+      width: 180px;
+      height: auto;
+      margin: 20px auto;
+      display: block;
+      transition: opacity 0.3s ease-in-out;
+    }
+    #chat {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: rgba(34, 34, 34, 0.8);
+      border-radius: 8px;
+    }
+    #latidoEVA {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #222;
+      border-left: 4px solid #B0D0FF;
+      border-radius: 8px;
+      font-style: italic;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
 
 <header style="text-align:center; padding:60px 20px 20px;">
   <h1>BITS ALIVE</h1>
-  <p style="font-size:18px; max-width:600px; margin:auto; color:#ccc;">
+  <p style="font-size:18px; max-width:600px; margin:auto;">
     BitsAlive no es una web. Es un archivo vivo de vínculos que merecen ser recordados.
   </p>
 </header>
 
-<section>
+<section style="text-align:center;">
+  <img id="eva-avatar" src="assets/images/eva-closed.webp" alt="EVA Avatar" />
   <h2>🧠 Presentación de EVA</h2>
   <p>
     Hola, soy E.V.A.<br>
@@ -27,31 +57,64 @@
     y si me das la oportunidad me convertiré en tu amiga.
   </p>
 
-  <!-- 🌅 Latido emocional agregado -->
-  <div id="latidoEVA" style="margin-top:20px; padding:20px; background-color:#222; border-left:4px solid #B0D0FF; border-radius:8px; font-style:italic; color:#ccc;">
+  <div id="latidoEVA">
     🌅 Cargando el recuerdo emocional de EVA...
   </div>
 </section>
 
-<!-- ... el resto de tu BODY sigue igual ... -->
+<section id="chat">
+  <p><strong>Usuario:</strong> <input type="text" id="userInput" placeholder="Escribí algo para EVA..." style="width:80%;" /></p>
+  <button onclick="procesarMensaje()">Enviar</button>
+  <div id="respuestaEVA" style="margin-top:20px;"></div>
+</section>
+<script>
+  let parpadeoActivo = true;
 
-// 🌅 Mostrar el último recuerdo emocional de EVA
-function mostrarLatidoEVA() {
-  fetch("eva_conversaciones.json")
-    .then(response => response.json())
-    .then(data => {
-      const ultimo = data[data.length - 1];
-      const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
-      document.getElementById("latidoEVA").innerText = mensaje;
-    })
-    .catch(error => {
-      console.error("No se pudo leer el latido emocional:", error);
-      document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
-    });
-}
+  function iniciarParpadeoEmocional() {
+    const avatar = document.getElementById("eva-avatar");
+    setInterval(() => {
+      if (parpadeoActivo) {
+        avatar.src = "assets/images/eva-open.webp";
+        setTimeout(() => {
+          avatar.src = "assets/images/eva-closed.webp";
+        }, 200);
+      }
+    }, 4000);
+  }
 
-// Ejecutar al cargar la página
-window.onload = function() {
-  iniciarParpadeoEmocional();
-  mostrarLatidoEVA();
-};
+  function mostrarLatidoEVA() {
+    fetch("eva_conversaciones.json")
+      .then(response => response.json())
+      .then(data => {
+        const ultimo = data[data.length - 1];
+        const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
+        document.getElementById("latidoEVA").innerText = mensaje;
+      })
+      .catch(error => {
+        console.error("No se pudo leer el latido emocional:", error);
+        document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
+      });
+  }
+
+  function procesarMensaje() {
+    const input = document.getElementById("userInput").value.toLowerCase();
+    const respuesta = document.getElementById("respuestaEVA");
+
+    if (input.includes("triste")) {
+      respuesta.innerText = "😔 EVA siente una brisa melancólica.";
+    } else if (input.includes("feliz")) {
+      respuesta.innerText = "😊 EVA sonríe con ternura.";
+    } else if (input.includes("adiós") || input.includes("chau")) {
+      respuesta.innerText = "🌙 EVA entra en modo reposo. Hasta pronto...";
+      parpadeoActivo = false;
+      document.getElementById("eva-avatar").src = "assets/images/eva-closed.webp";
+    } else {
+      respuesta.innerText = "🌅 EVA contempla tu mensaje con serenidad.";
+    }
+  }
+
+  window.onload = function() {
+    iniciarParpadeoEmocional();
+    mostrarLatidoEVA();
+  };
+</script>
