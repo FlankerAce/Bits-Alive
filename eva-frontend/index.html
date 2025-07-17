@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EVA Frontend</title>
+  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
+  <meta name="theme-color" content="#B0D0FF">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #ccc;
+      padding: 40px;
+    }
+    #latidoEVA {
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #222;
+      border-left: 4px solid #B0D0FF;
+      border-radius: 8px;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header style="text-align:center;">
+    <h1>EVA Frontend</h1>
+    <p>Este módulo muestra el último recuerdo emocional de EVA.</p>
+  </header>
+
+  <section>
+    <h2>🌅 Latido emocional</h2>
+    <div id="latidoEVA">Cargando recuerdo...</div>
+  </section>
+
+  <script>
+    function mostrarLatidoEVA() {
+      fetch("eva_conversaciones.json")
+        .then(response => response.json())
+        .then(data => {
+          const ultimo = data[data.length - 1];
+          const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
+          document.getElementById("latidoEVA").innerText = mensaje;
+        })
+        .catch(error => {
+          console.error("No se pudo leer el latido emocional:", error);
+          document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
+        });
+    }
+
+    window.onload = mostrarLatidoEVA;
+  </script>
+
+</body>
+</html>
