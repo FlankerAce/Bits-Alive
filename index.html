@@ -1,4 +1,3 @@
-<!-- 🟦 HEAD INICIO -->
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -142,8 +141,6 @@
     }
   </style>
 </head>
-<!-- 🟦 HEAD FIN -->
-<!-- 🟩 BODY INICIO -->
 <body>
 
 <header style="text-align:center; padding:60px 20px 20px;">
@@ -220,9 +217,6 @@
   Y eso… lo tenés de sobra.”<br><br>
   — Leo & Lucy
 </footer>
-
-<!-- 🟩 BODY FIN -->
-<!-- 🟨 SCRIPT INICIO -->
 <script>
 // 🧠 Variables principales
 let evaParpadeando = false;
@@ -249,7 +243,6 @@ function loginColaborador() {
   const mensaje = document.getElementById("colabMensaje");
 
   if (usuario === "colaborador" && clave === "bitsalive") {
-    document.getElementById("lucyEditor").style.display = "block";
     document.getElementById("lucyAsistente").style.display = "block";
     document.getElementById("colabUsuario").style.display = "none";
     document.getElementById("colabClave").style.display = "none";
@@ -266,7 +259,7 @@ function logoutColaborador() {
   location.reload();
 }
 
-// 🔐 Login desarrollador
+// 🔐 Login desarrollador (con acceso a JSON)
 function loginDesarrollador() {
   const usuario = document.getElementById("devUsuario").value.trim();
   const clave = document.getElementById("devClave").value.trim();
@@ -278,6 +271,7 @@ function loginDesarrollador() {
     document.querySelector('[onclick="loginDesarrollador()"]').style.display = "none";
     document.querySelector('[onclick="toggleDevClave()"]').style.display = "none";
     document.getElementById("lucyAsistente").style.display = "block";
+    document.getElementById("lucyEditor").style.display = "block";
     mensaje.textContent = "Bienvenido Leandro.";
     mensaje.innerHTML += `<br><button onclick="logoutDesarrollador()">Logout</button>`;
   } else {
@@ -432,4 +426,3 @@ function generarLucyJson() {
   document.getElementById("lucyJsonPreview").textContent = JSON.stringify(json, null, 2);
 }
 </script>
-<!-- 🟨 SCRIPT FIN -->
