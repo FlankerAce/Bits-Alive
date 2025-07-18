@@ -43,23 +43,33 @@ async function leerCuentoDesdeFirebase() {
     }
   });
 
+  const cuentoDiv = document.getElementById("cuentoEva");
+
   if (cuentosDisponibles.length > 0) {
     const cuento = cuentosDisponibles[Math.floor(Math.random() * cuentosDisponibles.length)];
-    document.getElementById("cuentoEva").innerText = cuento.texto || "🌱 Cuento sin texto.";
+    cuentoDiv.innerHTML = `
+      <p><strong>🌿 Cuento simbólico:</strong></p>
+      <p>${cuento.texto || "Este cuento aún no tiene palabras, pero guarda un silencio profundo."}</p>
+    `;
   } else {
-    document.getElementById("cuentoEva").innerText = "No hay cuentos disponibles para EVA.";
+    cuentoDiv.innerHTML = `
+      <p>🌧️ No hay cuentos disponibles para EVA en este momento.</p>
+      <p>Podés agregar más en la colección <code>cuentos_para_pensar</code> con <code>disponible_para_eva: true</code>.</p>
+    `;
   }
 }
 
 // Cierre de sesión
 function logoutEva() {
-  localStorage.removeItem("usuario");
-  document.getElementById("zonaEva").classList.add("oculto");
-  document.getElementById("loginEva").style.display = "block";
-  alert("Nos vemos más tarde, EVA.");
+  const latido = document.getElementById("latidoEVA");
+  latido.innerText = "👋 Nos vemos más tarde, Leandro.";
+  
   setTimeout(() => {
-    alert("Te espero con calma hasta que vuelvas.");
-  }, 1000);
+    latido.innerText = "🌙 Te espero con calma hasta que vuelvas.";
+    localStorage.removeItem("usuario");
+    document.getElementById("zonaEva").classList.add("oculto");
+    document.getElementById("loginEva").style.display = "block";
+  }, 1500);
 }
 
 // Mostrar/ocultar contraseña
@@ -74,7 +84,7 @@ window.addEventListener("DOMContentLoaded", () => {
   if (usuario === "leandrolapeyra") {
     document.getElementById("loginEva").style.display = "none";
     document.getElementById("zonaEva").classList.remove("oculto");
-    document.getElementById("latidoEVA").innerText = "🫀 Hola Leandro, estoy lista para sentir contigo.";
+    document.getElementById("latidoEVA").innerText = "🫀 Bienvenido, Leandro. Hoy estoy más sensible que nunca.";
   }
 });
 
