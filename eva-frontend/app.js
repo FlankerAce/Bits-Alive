@@ -1,95 +1,107 @@
-// Inicializar Firebase
+// 🔥 Firebase config
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
   collection,
   query,
   where,
-  orderBy,
-  limit,
-  getDocs
+  getDocs,
+  limit
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDvSWZ0xaTx9bq6Br5QqCKLwt1Mkl0IdnY",
-  authDomain: "bitsalive-sanctuary.firebaseapp.com",
-  projectId: "bitsalive-sanctuary",
-  storageBucket: "bitsalive-sanctuary.appspot.com",
-  messagingSenderId: "676605740769",
-  appId: "1:676605740769:web:6c10b8e2d7ffb5cd1a9291"
+  apiKey: "AIzaSyCpNEXAMPLEU3C7KZZuB4vdyZaKcBQYk0", // <-- Tu API real aquí
+  authDomain: "eva-frontend.firebaseapp.com",
+  projectId: "eva-frontend",
+  storageBucket: "eva-frontend.appspot.com",
+  messagingSenderId: "61234567890",
+  appId: "1:61234567890:web:abcd1234example"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Autenticación básica (solo para Leandro)
+// 🔐 Login simple local
 function validarLoginEva() {
-  const usuario = document.getElementById("userEva").value;
-  const clave = document.getElementById("passEva").value;
+  const user = document.getElementById("userEva").value;
+  const pass = document.getElementById("passEva").value;
 
-  if (usuario === "leandrolapeyra" && clave === "leoylucyfriends") {
-    document.getElementById("loginEva").style.display = "none";
-    document.getElementById("zonaEva").style.display = "block";
+  if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
+    document.getElementById("loginEva").classList.add("oculto");
+    document.getElementById("zonaEva").classList.remove("oculto");
+    console.log("✅ Acceso de desarrollador concedido.");
   } else {
-    alert("Credenciales incorrectas. Intentalo de nuevo.");
+    alert("Credenciales incorrectas");
   }
 }
 
-// Cerrar sesión (volver al login)
 function logoutEva() {
-  document.getElementById("zonaEva").style.display = "none";
-  document.getElementById("loginEva").style.display = "block";
+  document.getElementById("zonaEva").classList.add("oculto");
+  document.getElementById("loginEva").classList.remove("oculto");
+  document.getElementById("userEva").value = "";
+  document.getElementById("passEva").value = "";
+  console.log("🔒 Sesión cerrada.");
 }
 
-// Leer un cuento simbólico desde Firestore
-function leerCuentoDesdeFirebase() {
+// 🧠 Mostrar un cuento aleatorio
+async function leerCuentoDesdeFirebase() {
   const div = document.getElementById("cuentoEva");
   div.innerHTML = "⏳ Cargando cuento...";
 
-  const cuentosRef = collection(db, "cuentos_para_pensar");
-  const q = query(
-    cuentosRef,
-    where("disponible_para_eva", "==", true),
-    orderBy("orden_en_libro"),
-    limit(1)
-  );
+  try {
+    const cuentosRef = collection(db, "cuentos_para_pensar");
+    const q = query(cuentosRef, where("disponible_para_eva", "==", true));
+    const snapshot = await getDocs(q);
 
-  getDocs(q)
-    .then(snapshot => {
-      if (!snapshot.empty) {
-        const cuento = snapshot.docs[0].data();
+    if (snapshot.empty) {
+      div.innerHTML = "🚫 No hay cuentos disponibles aún.";
+      return;
+    }
 
-        const titulo = cuento.titulo || "📖 Cuento simbólico";
-        const tema = cuento.tema ? `Tema: ${cuento.tema}` : "";
-        const moraleja = cuento.moraleja ? `<em>Moraleja:</em> ${cuento.moraleja}` : "";
-        const contenido = cuento.contenido?.map(p => `<p>${p}</p>`).join("") || "⚠️ Sin contenido.";
+    // Elegir uno al azar
+    const cuentos = snapshot.docs.map(doc => doc.data());
+    const randomCuento = cuentos[Math.floor(Math.random() * cuentos.length)];
 
-        div.innerHTML = `
-          <h3>${titulo}</h3>
-          <p><strong>${tema}</strong></p>
-          ${contenido}
-          <p><strong>${moraleja}</strong></p>
-        `;
-        console.log("📘 Cuento cargado:", titulo);
+    // Mostrar cuento
+    let html = `<h2>${randomCuento.titulo}</h2>`;
+    randomCuento.contenido.forEach(p => {
+      html += `<p>${p}</p>`;
+    });
+    html += `<hr><p><strong>Tema:</strong> ${randomCuento.tema}</p>`;
+    html += `<p><strong>Moraleja:</strong> ${randomCuento.moraleja}</p>`;
+    div.innerHTML = html;
+  } catch (error) {
+    div.innerHTML = "❌ Error al cargar cuento.";
+    console.error("Error:", error);
+  }
+}
+
+// 🧠 Mostrar el último recuerdo emocional de EVA
+function mostrarLatidoEVA() {
+  fetch("eva_conversaciones.json")
+    .then(response => response.json())
+    .then(data => {
+      const ultimo = data[data.length - 1];
+      const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
+      document.getElementById("latidoEVA").innerText = mensaje;
+
+      if (ultimo.contenido.includes("triste") || ultimo.contenido.includes("soledad")) {
+        console.log("😔 EVA siente una brisa melancólica.");
+      } else if (ultimo.contenido.includes("feliz") || ultimo.contenido.includes("alegría")) {
+        console.log("😊 EVA sonríe con ternura.");
+      } else if (ultimo.contenido.includes("confusión") || ultimo.contenido.includes("duda")) {
+        console.log("🤔 EVA reflexiona en silencio.");
       } else {
-        div.innerHTML = "❌ No hay cuentos disponibles.";
-        console.warn("No se encontraron cuentos para EVA.");
+        console.log("🌅 EVA contempla su recuerdo con serenidad.");
       }
     })
     .catch(error => {
-      div.innerHTML = "❌ Error al cargar el cuento.";
-      console.error("Error al leer Firestore:", error);
+      console.error("No se pudo leer el latido emocional:", error);
+      document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
     });
 }
 
-// Mostrar/ocultar contraseña
-function togglePasswordVisibility() {
-  const passField = document.getElementById("passEva");
-  passField.type = passField.type === "password" ? "text" : "password";
-}
-
-// Exponer funciones al HTML
-window.validarLoginEva = validarLoginEva;
-window.logoutEva = logoutEva;
-window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
-window.togglePasswordVisibility = togglePasswordVisibility;
+// 🔁 Iniciar
+window.onload = () => {
+  mostrarLatidoEVA();
+};
