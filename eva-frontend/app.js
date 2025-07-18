@@ -43,7 +43,6 @@ function logoutEva() {
 window.logoutEva = logoutEva;
 
 // 📚 Leer cuento simbólico
-async // Leer un cuento simbólico desde Firestore
 function leerCuentoDesdeFirebase() {
   const div = document.getElementById("cuentoEva");
   div.innerHTML = "⏳ Cargando cuento...";
