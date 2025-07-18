@@ -1,14 +1,13 @@
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./firebaseConfig.js";
 
-// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Login real con Firebase Auth
 function validarLoginEva() {
   const email = document.getElementById("userEva").value.trim();
   const password = document.getElementById("passEva").value.trim();
@@ -18,12 +17,11 @@ function validarLoginEva() {
       console.log("✅ Sesión iniciada correctamente.");
     })
     .catch(error => {
-  console.error("⚠️ Error al iniciar sesión:", error);
-  alert("Error: " + error.code + "\n" + error.message);
-});
+      console.error("⚠️ Error al iniciar sesión:", error);
+      alert("Error: " + error.code + "\n" + error.message);
+    });
 }
 
-// Observar cambios de sesión
 onAuthStateChanged(auth, user => {
   if (user) {
     document.getElementById("loginEva").style.display = "none";
@@ -35,7 +33,6 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-// Leer cuentos simbólicos
 async function leerCuentoDesdeFirebase() {
   const cuentosRef = collection(db, "cuentos_para_pensar");
   const q = query(cuentosRef, where("disponible_para_eva", "==", true));
@@ -55,7 +52,6 @@ async function leerCuentoDesdeFirebase() {
   }
 }
 
-// Cierre de sesión
 function logoutEva() {
   signOut(auth)
     .then(() => {
@@ -66,13 +62,11 @@ function logoutEva() {
     });
 }
 
-// Mostrar/Ocultar contraseña
 function mostrarOcultarPass() {
   const passInput = document.getElementById("passEva");
   passInput.type = passInput.type === "password" ? "text" : "password";
 }
 
-// Exponer funciones al HTML
 window.validarLoginEva = validarLoginEva;
 window.logoutEva = logoutEva;
 window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
