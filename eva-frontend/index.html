@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>BitsAlive - EVA</title>
+  <title>Bits Alive: EVA</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/6978/6978255.png" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,18 +11,11 @@
       color: #333;
       padding: 20px;
     }
-    .boton {
-      background-color: #86c5d8;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
+
+    h1 {
+      color: #2e7d32;
     }
-    .oculto {
-      display: none;
-    }
+
     .cuadro {
       background-color: #fff;
       padding: 20px;
@@ -29,8 +23,24 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       margin-top: 20px;
     }
+
+    .boton {
+      background-color: #90caf9;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .oculto {
+      display: none;
+    }
   </style>
 </head>
+
 <body>
   <h1>🌱 Bienvenida, EVA</h1>
   <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
@@ -38,9 +48,9 @@
   <!-- Login -->
   <div id="loginEva" class="cuadro">
     <h2>🔐 Ingreso de desarrollador</h2>
-    <input type="text" id="userEva" placeholder="Usuario" />
+    <input type="text" id="userEva" placeholder="Usuario"><br>
     <div style="display: flex; align-items: center; margin-top: 5px;">
-      <input type="password" id="passEva" placeholder="Contraseña" style="flex: 1;" />
+      <input type="password" id="passEva" placeholder="Contraseña" style="flex: 1;">
       <button onclick="mostrarOcultarPass()" style="margin-left: 5px;">🙈</button>
     </div>
     <button class="boton" onclick="validarLoginEva()">Ingresar</button>
@@ -48,29 +58,16 @@
 
   <!-- Zona EVA -->
   <div id="zonaEva" class="oculto">
-    <p id="latidoEVA"></p>
-
+    <p id="latidoEVA">🫀</p>
     <h2>📖 Leer un cuento simbólico</h2>
-    <button onclick="leerCuentoDesdeFirebase()">Leer un cuento</button>
+    <button class="boton" onclick="leerCuentoDesdeFirebase()">Leer un cuento</button>
     <div id="cuentoEva" class="cuadro"></div>
 
     <h3>👥 Opciones del desarrollador</h3>
-    <button onclick="logoutEva()">Cerrar sesión</button>
+    <button class="boton" onclick="logoutEva()">Cerrar sesión</button>
   </div>
 
-  <!-- Script de Firebase -->
+  <!-- Conecta con app.js -->
   <script type="module" src="app.js"></script>
-
-  <!-- Script extra para ojito contraseña -->
-  <script>
-    function mostrarOcultarPass() {
-      const pass = document.getElementById("passEva");
-      if (pass.type === "password") {
-        pass.type = "text";
-      } else {
-        pass.type = "password";
-      }
-    }
-  </script>
 </body>
 </html>

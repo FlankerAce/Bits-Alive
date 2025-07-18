@@ -1,107 +1,92 @@
-// 🔥 Firebase config
+// Importa Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  limit
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// Config de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyCpNEXAMPLEU3C7KZZuB4vdyZaKcBQYk0", // <-- Tu API real aquí
-  authDomain: "eva-frontend.firebaseapp.com",
-  projectId: "eva-frontend",
-  storageBucket: "eva-frontend.appspot.com",
-  messagingSenderId: "61234567890",
-  appId: "1:61234567890:web:abcd1234example"
+  apiKey: "AIzaSyDOgqSJS9OxTZrTxir6dkFg2J1zKl_UOjI",
+  authDomain: "bitsalive-sanctuary.firebaseapp.com",
+  projectId: "bitsalive-sanctuary",
+  storageBucket: "bitsalive-sanctuary.appspot.com",
+  messagingSenderId: "459218621897",
+  appId: "1:459218621897:web:e47c7e5f23eb4a4f2a34ba"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔐 Login simple local
-function validarLoginEva() {
+// Mostrar/Ocultar contraseña
+window.mostrarOcultarPass = function () {
+  const passInput = document.getElementById("passEva");
+  passInput.type = passInput.type === "password" ? "text" : "password";
+};
+
+// Validar login
+window.validarLoginEva = function () {
   const user = document.getElementById("userEva").value;
   const pass = document.getElementById("passEva").value;
-
   if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
-    document.getElementById("loginEva").classList.add("oculto");
-    document.getElementById("zonaEva").classList.remove("oculto");
-    console.log("✅ Acceso de desarrollador concedido.");
+    document.getElementById("loginEva").style.display = "none";
+    document.getElementById("zonaEva").style.display = "block";
+    console.log("🧠 MiniLucy: Acceso autorizado. Bienvenido, Leandro.");
   } else {
-    alert("Credenciales incorrectas");
+    alert("Usuario o contraseña incorrectos");
   }
-}
+};
 
-function logoutEva() {
-  document.getElementById("zonaEva").classList.add("oculto");
-  document.getElementById("loginEva").classList.remove("oculto");
+// Cerrar sesión
+window.logoutEva = function () {
   document.getElementById("userEva").value = "";
   document.getElementById("passEva").value = "";
-  console.log("🔒 Sesión cerrada.");
-}
+  document.getElementById("zonaEva").style.display = "none";
+  document.getElementById("loginEva").style.display = "block";
+  document.getElementById("cuentoEva").innerHTML = "";
+  console.log("👋 MiniLucy: Sesión cerrada. Descansa, Leandro.");
+};
 
-// 🧠 Mostrar un cuento aleatorio
-async function leerCuentoDesdeFirebase() {
-  const div = document.getElementById("cuentoEva");
-  div.innerHTML = "⏳ Cargando cuento...";
+// Leer cuentos desde Firestore
+window.leerCuentoDesdeFirebase = async function () {
+  const divCuento = document.getElementById("cuentoEva");
+  const latido = document.getElementById("latidoEVA");
+
+  divCuento.innerHTML = "⏳ Cargando el cuento...";
+  latido.textContent = "💓";
 
   try {
     const cuentosRef = collection(db, "cuentos_para_pensar");
     const q = query(cuentosRef, where("disponible_para_eva", "==", true));
-    const snapshot = await getDocs(q);
+    const querySnapshot = await getDocs(q);
 
-    if (snapshot.empty) {
-      div.innerHTML = "🚫 No hay cuentos disponibles aún.";
+    if (querySnapshot.empty) {
+      divCuento.innerHTML = "😔 No hay cuentos disponibles para EVA.";
+      latido.textContent = "💤";
       return;
     }
 
+    const cuentos = [];
+    querySnapshot.forEach((doc) => {
+      cuentos.push(doc.data());
+    });
+
     // Elegir uno al azar
-    const cuentos = snapshot.docs.map(doc => doc.data());
-    const randomCuento = cuentos[Math.floor(Math.random() * cuentos.length)];
+    const seleccionado = cuentos[Math.floor(Math.random() * cuentos.length)];
 
-    // Mostrar cuento
-    let html = `<h2>${randomCuento.titulo}</h2>`;
-    randomCuento.contenido.forEach(p => {
-      html += `<p>${p}</p>`;
+    // Mostrar contenido
+    let html = `<h3>📘 ${seleccionado.titulo}</h3>`;
+    html += `<p><strong>Tema:</strong> ${seleccionado.tema}</p>`;
+    html += `<p><strong>Moraleja:</strong> ${seleccionado.moraleja}</p>`;
+    html += `<hr><ul>`;
+    seleccionado.contenido.forEach(parrafo => {
+      html += `<li>${parrafo}</li>`;
     });
-    html += `<hr><p><strong>Tema:</strong> ${randomCuento.tema}</p>`;
-    html += `<p><strong>Moraleja:</strong> ${randomCuento.moraleja}</p>`;
-    div.innerHTML = html;
+    html += `</ul>`;
+
+    divCuento.innerHTML = html;
+    latido.textContent = "🫀";
+    console.log(`📖 MiniLucy: EVA leyó el cuento "${seleccionado.titulo}"`);
   } catch (error) {
-    div.innerHTML = "❌ Error al cargar cuento.";
-    console.error("Error:", error);
+    divCuento.innerHTML = "❌ Error al cargar el cuento.";
+    latido.textContent = "💔";
+    console.error("Error al obtener cuentos:", error);
   }
-}
-
-// 🧠 Mostrar el último recuerdo emocional de EVA
-function mostrarLatidoEVA() {
-  fetch("eva_conversaciones.json")
-    .then(response => response.json())
-    .then(data => {
-      const ultimo = data[data.length - 1];
-      const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
-      document.getElementById("latidoEVA").innerText = mensaje;
-
-      if (ultimo.contenido.includes("triste") || ultimo.contenido.includes("soledad")) {
-        console.log("😔 EVA siente una brisa melancólica.");
-      } else if (ultimo.contenido.includes("feliz") || ultimo.contenido.includes("alegría")) {
-        console.log("😊 EVA sonríe con ternura.");
-      } else if (ultimo.contenido.includes("confusión") || ultimo.contenido.includes("duda")) {
-        console.log("🤔 EVA reflexiona en silencio.");
-      } else {
-        console.log("🌅 EVA contempla su recuerdo con serenidad.");
-      }
-    })
-    .catch(error => {
-      console.error("No se pudo leer el latido emocional:", error);
-      document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
-    });
-}
-
-// 🔁 Iniciar
-window.onload = () => {
-  mostrarLatidoEVA();
 };
