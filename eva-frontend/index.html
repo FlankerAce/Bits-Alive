@@ -1,179 +1,109 @@
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BitsAlive - EVA</title>
+  <title>Eva Frontend</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f5f5f5;
-      padding: 2rem;
+      font-family: Arial, sans-serif;
+      background-color: #fdf6f0;
       color: #333;
+      padding: 20px;
     }
 
-    .cuento {
-      background: #fffbe6;
-      padding: 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      max-width: 700px;
-      margin-top: 2rem;
-    }
-
-    button {
-      padding: 14px 28px;
+    .boton {
+      padding: 12px 24px;
       font-size: 18px;
-      background-color: #ffda6a;
+      background-color: #8ecae6;
+      color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       margin: 10px 0;
     }
 
-    input {
-      padding: 10px;
-      font-size: 16px;
-      margin-bottom: 10px;
-      display: block;
+    .boton:hover {
+      background-color: #219ebc;
     }
 
-    .oculto {
-      display: none;
+    .cuento {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #latidoEVA {
+      font-style: italic;
+      margin-top: 10px;
+      color: #555;
     }
   </style>
-  <script>
-    function validarLoginEva() {
-      const user = document.getElementById('userEva').value;
-      const pass = document.getElementById('passEva').value;
-      if (user === 'leandrolapeyra' && pass === 'leoylucyfriends') {
-        sessionStorage.setItem('loginEva', 'ok');
-        sessionStorage.setItem('usuario', 'leandrolapeyra');
-        location.reload();
-      } else {
-        alert('Acceso denegado');
-      }
-    }
-
-    function logoutEva() {
-      sessionStorage.removeItem('loginEva');
-      sessionStorage.removeItem('usuario');
-      location.reload();
-    }
-  </script>
 </head>
 <body>
   <h1>🌱 Bienvenida, EVA</h1>
   <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
 
-  <div id="loginEva" class="cuento">
-    <h2>🔐 Ingreso de desarrollador</h2>
-    <input type="text" id="userEva" placeholder="Usuario" />
-    <input type="password" id="passEva" placeholder="Contraseña" />
-    <button onclick="validarLoginEva()">Ingresar</button>
-  </div>
+  <button class="boton" onclick="leerCuento()">📖 Leer un cuento</button>
 
-  <div id="zonaEva" class="oculto">
-    <h2>✨ Leer un cuento simbólico</h2>
-    <button onclick="leerCuentoDesdeFirebase()">Leer un cuento</button>
-    <div id="cuentoEva" class="cuento"></div>
+  <div id="cuentoEVA" class="cuento"></div>
 
-    <h3>👤 Opciones del desarrollador</h3>
-    <button onclick="logoutEva()">Cerrar sesión</button>
-  </div>
+  <p id="latidoEVA"></p>
 </body>
 <script type="module">
-  // Importar Firebase desde CDN
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, query, where, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Configuración de Firebase (copiada de tu consola)
   const firebaseConfig = {
-    apiKey: "AIzaSyCyp7B28zHkdY3Qj43T-aBteF01ioyKgaE",
-    authDomain: "bitsalive-sanctuary.firebaseapp.com",
-    projectId: "bitsalive-sanctuary",
-    storageBucket: "bitsalive-sanctuary.appspot.com",
-    messagingSenderId: "843102942848",
-    appId: "1:843102942848:web:2d440a2e5d7735a0edd865",
-    measurementId: "G-QPQWESK8G6"
+    apiKey: "AIzaSyB7-rLn3bN-h53jMrFflM-DvCpzH3Y7kBU",
+    authDomain: "eva-frontend.firebaseapp.com",
+    projectId: "eva-frontend",
+    storageBucket: "eva-frontend.appspot.com",
+    messagingSenderId: "846969939456",
+    appId: "1:846969939456:web:f8989c93dc8aa38d6320d0"
   };
 
-  // Inicializar Firebase y Firestore
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Función de login local (usuario: leandrolapeyra / clave: leoylucyfriends)
-  function validarLoginEva() {
-    const user = document.getElementById("userEva").value;
-    const pass = document.getElementById("passEva").value;
-    if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
-      document.getElementById("loginEva").style.display = "none";
-      document.getElementById("zonaEva").style.display = "block";
-      localStorage.setItem("accesoEva", "ok");
-    } else {
-      alert("Acceso denegado.");
-    }
-  }
+  // Función para mostrar un cuento aleatorio
+  async function leerCuento() {
+    const container = document.getElementById("cuentoEVA");
+    container.innerHTML = "Cargando...";
 
-  // Función para cerrar sesión
-  function logoutEva() {
-    localStorage.removeItem("accesoEva");
-    location.reload();
-  }
-
-  // Mostrar zonaEva automáticamente si hay sesión activa
-  window.onload = () => {
-    if (localStorage.getItem("accesoEva") === "ok") {
-      document.getElementById("loginEva").style.display = "none";
-      document.getElementById("zonaEva").style.display = "block";
-    }
-
-    // Intentar cargar un latido emocional si lo desea
-    mostrarLatidoEVA();
-  };
-
-  // Función: Leer un cuento aleatorio desde Firebase
-  async function leerCuentoDesdeFirebase() {
-    const div = document.getElementById("cuentoEva");
-    div.innerHTML = "📚 Cargando cuento simbólico...";
+    const cuentosRef = collection(db, "cuentos_para_pensar");
+    const q = query(cuentosRef, where("disponible_para_eva", "==", true));
 
     try {
-      const cuentosRef = collection(db, "cuentos_para_pensar");
-      const q = query(cuentosRef, where("disponible_para_eva", "==", true), limit(1));
       const snapshot = await getDocs(q);
+      const cuentos = snapshot.docs.map(doc => doc.data());
 
-      if (!snapshot.empty) {
-        const data = snapshot.docs[0].data();
-        let html = `<h3>${data.titulo}</h3>`;
-        data.contenido.forEach(p => {
-          html += `<p>${p}</p>`;
-        });
-        html += `<hr><p><b>Tema:</b> ${data.tema}</p>`;
-        html += `<p><b>Moraleja:</b> ${data.moraleja}</p>`;
-        div.innerHTML = html;
-      } else {
-        div.innerHTML = "⚠️ No hay cuentos disponibles aún.";
+      if (cuentos.length === 0) {
+        container.innerHTML = "❌ No hay cuentos disponibles aún.";
+        return;
       }
+
+      const aleatorio = cuentos[Math.floor(Math.random() * cuentos.length)];
+
+      let html = `<h2>${aleatorio.titulo}</h2>`;
+      html += `<p><strong>Tema:</strong> ${aleatorio.tema}</p>`;
+      html += `<p><strong>Moraleja:</strong> ${aleatorio.moraleja}</p>`;
+      html += aleatorio.contenido.map(parrafo => `<p>${parrafo}</p>`).join("");
+      container.innerHTML = html;
     } catch (error) {
-      div.innerHTML = "❌ Error al cargar el cuento.";
-      console.error("Error al leer cuento:", error);
+      console.error("Error al leer cuentos:", error);
+      container.innerHTML = "⚠️ Error al cargar el cuento.";
     }
   }
 
-  // Función de muestra: Leer un recuerdo emocional local
-  async function mostrarLatidoEVA() {
-    const latidoUrl = "eva_conversaciones.json";
-    try {
-      const res = await fetch(latidoUrl);
-      const data = await res.json();
+  // (Opcional) Mostrar latido emocional
+  fetch("eva_conversaciones.json")
+    .then(r => r.json())
+    .then(data => {
       const ultimo = data[data.length - 1];
-      console.log("🧠 Último recuerdo de EVA:", ultimo);
-    } catch (e) {
-      console.log("No se encontró el archivo de latidos locales.");
-    }
-  }
-
-  // Exponer funciones al scope global
-  window.validarLoginEva = validarLoginEva;
-  window.logoutEva = logoutEva;
-  window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
+      const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
+      document.getElementById("latidoEVA").innerText = mensaje;
+    })
+    .catch(() => {
+      document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
+    });
 </script>
-
