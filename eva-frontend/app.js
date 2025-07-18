@@ -1,19 +1,12 @@
-
-// ✅ Firebase App (ya inicializado previamente en index.html)
-
-const auth = firebase.auth();
-const db = firebase.firestore();
-
 // 🔐 Login manual
-function loginManual() {
-  const user = document.getElementById("usuario").value;
-  const pass = document.getElementById("clave").value;
+function validarLoginEva() {
+  const user = document.getElementById("userEva").value;
+  const pass = document.getElementById("passEva").value;
 
   if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
     localStorage.setItem("usuario", "leandrolapeyra");
-    document.getElementById("contenedorLogin").style.display = "none";
-    document.getElementById("cuentosContainer").style.display = "block";
-    document.getElementById("cerrarSesion").style.display = "inline-block";
+    document.getElementById("loginEva").style.display = "none";
+    document.getElementById("zonaEva").classList.remove("oculto");
     console.log("🔓 Sesión iniciada como desarrollador.");
   } else {
     alert("Credenciales incorrectas.");
@@ -21,46 +14,37 @@ function loginManual() {
 }
 
 // 🔒 Logout
-function cerrarSesion() {
+function logoutEva() {
   localStorage.removeItem("usuario");
-  document.getElementById("contenedorLogin").style.display = "block";
-  document.getElementById("cuentosContainer").style.display = "none";
-  document.getElementById("cerrarSesion").style.display = "none";
+  document.getElementById("loginEva").style.display = "block";
+  document.getElementById("zonaEva").classList.add("oculto");
   console.log("🔒 Sesión cerrada.");
 }
 
 // 🧠 Leer un cuento simbólico al azar
-function leerCuento() {
-  document.getElementById("cuentoResultado").innerText = "⏳ Cargando el cuento...";
+function leerCuentoDesdeFirebase() {
+  document.getElementById("cuentoEva").innerText = "⏳ Cargando el cuento...";
 
   db.collection("cuentos_para_pensar")
     .where("disponible_para_eva", "==", true)
     .get()
     .then(snapshot => {
       if (snapshot.empty) {
-        document.getElementById("cuentoResultado").innerText = "😢 No hay cuentos disponibles aún.";
+        document.getElementById("cuentoEva").innerText = "😢 No hay cuentos disponibles aún.";
         return;
       }
 
       const cuentos = snapshot.docs.map(doc => doc.data());
       const index = Math.floor(Math.random() * cuentos.length);
       const cuento = cuentos[index];
-
-      // 📝 Verificamos que contenido exista y sea array
       const contenidoArray = Array.isArray(cuento.contenido) ? cuento.contenido : [];
 
-      const resultado = `📖 *${cuento.titulo}*
-
-${contenidoArray.join("
-
-")}
-
-🧠 Moraleja: ${cuento.moraleja}`;
-      document.getElementById("cuentoResultado").innerText = resultado;
+      const resultado = `📖 *${cuento.titulo}*\n\n${contenidoArray.join("\n\n")}\n\n🧠 Moraleja: ${cuento.moraleja}`;
+      document.getElementById("cuentoEva").innerText = resultado;
     })
     .catch(error => {
       console.error("Error al leer cuento:", error);
-      document.getElementById("cuentoResultado").innerText = "⚠️ Error al cargar el cuento.";
+      document.getElementById("cuentoEva").innerText = "⚠️ Error al cargar el cuento.";
     });
 }
 
@@ -68,8 +52,13 @@ ${contenidoArray.join("
 window.onload = () => {
   const usuario = localStorage.getItem("usuario");
   if (usuario === "leandrolapeyra") {
-    document.getElementById("contenedorLogin").style.display = "none";
-    document.getElementById("cuentosContainer").style.display = "block";
-    document.getElementById("cerrarSesion").style.display = "inline-block";
+    document.getElementById("loginEva").style.display = "none";
+    document.getElementById("zonaEva").classList.remove("oculto");
   }
 };
+
+// 🙈 Mostrar/Ocultar contraseña
+function mostrarOcultarPass() {
+  const passInput = document.getElementById("passEva");
+  passInput.type = passInput.type === "password" ? "text" : "password";
+}
