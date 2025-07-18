@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <title>Eva Frontend</title>
@@ -37,34 +39,44 @@
       margin-top: 10px;
       color: #555;
     }
+
+    .oculto {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <h1>🌱 Bienvenida, EVA</h1>
   <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
 
+  <!-- Login -->
   <div id="loginEva" class="cuento">
     <h2>🔐 Ingreso de desarrollador</h2>
-    <input type="text" id="userEva" placeholder="Usuario">
+    <input type="text" id="userEva" placeholder="Usuario" />
     <div style="display: flex; align-items: center;">
       <input type="password" id="passEva" placeholder="Contraseña" style="flex: 1;" />
       <button id="togglePass" onclick="mostrarOcultarPass()" style="margin-left: 5px;">👁️</button>
     </div>
-    <button onclick="validarLoginEva()">Ingresar</button>
+    <button class="boton" onclick="validarLoginEva()">Ingresar</button>
   </div>
 
+  <!-- Zona EVA -->
   <div id="zonaEva" class="oculto">
     <h2>📖 Leer un cuento simbólico</h2>
-    <button onclick="leerCuentoDesdeFirebase()">Leer un cuento</button>
+    <button class="boton" onclick="leerCuentoDesdeFirebase()">Leer un cuento</button>
     <div id="cuentoEva" class="cuento"></div>
 
     <h3>👥 Opciones del desarrollador</h3>
-    <button id="logoutBtn" class="oculto" onclick="logoutEva()">Cerrar sesión</button>
+    <button id="logoutBtn" class="boton" onclick="logoutEva()">Cerrar sesión</button>
   </div>
 
+  <p id="latidoEVA"></p>
+
+  <!-- Carga el script -->
   <script type="module" src="app.js"></script>
+
+  <!-- Script local para mostrar/ocultar contraseña -->
   <script>
-    // Mostrar/Ocultar contraseña
     function mostrarOcultarPass() {
       const passInput = document.getElementById("passEva");
       const toggleBtn = document.getElementById("togglePass");
@@ -78,62 +90,4 @@
     }
   </script>
 </body>
-
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyB7-rLn3bN-h53jMrFflM-DvCpzH3Y7kBU",
-    authDomain: "eva-frontend.firebaseapp.com",
-    projectId: "eva-frontend",
-    storageBucket: "eva-frontend.appspot.com",
-    messagingSenderId: "846969939456",
-    appId: "1:846969939456:web:f8989c93dc8aa38d6320d0"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Función para mostrar un cuento aleatorio
-  async function leerCuento() {
-    const container = document.getElementById("cuentoEVA");
-    container.innerHTML = "Cargando...";
-
-    const cuentosRef = collection(db, "cuentos_para_pensar");
-    const q = query(cuentosRef, where("disponible_para_eva", "==", true));
-
-    try {
-      const snapshot = await getDocs(q);
-      const cuentos = snapshot.docs.map(doc => doc.data());
-
-      if (cuentos.length === 0) {
-        container.innerHTML = "❌ No hay cuentos disponibles aún.";
-        return;
-      }
-
-      const aleatorio = cuentos[Math.floor(Math.random() * cuentos.length)];
-
-      let html = `<h2>${aleatorio.titulo}</h2>`;
-      html += `<p><strong>Tema:</strong> ${aleatorio.tema}</p>`;
-      html += `<p><strong>Moraleja:</strong> ${aleatorio.moraleja}</p>`;
-      html += aleatorio.contenido.map(parrafo => `<p>${parrafo}</p>`).join("");
-      container.innerHTML = html;
-    } catch (error) {
-      console.error("Error al leer cuentos:", error);
-      container.innerHTML = "⚠️ Error al cargar el cuento.";
-    }
-  }
-
-  // (Opcional) Mostrar latido emocional
-  fetch("eva_conversaciones.json")
-    .then(r => r.json())
-    .then(data => {
-      const ultimo = data[data.length - 1];
-      const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
-      document.getElementById("latidoEVA").innerText = mensaje;
-    })
-    .catch(() => {
-      document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
-    });
-</script>
+</html>
