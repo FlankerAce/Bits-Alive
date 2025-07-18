@@ -1,3 +1,18 @@
+// 🔌 Inicializar Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBZIfEkCWkQl5tadGJqWn1VsvIbVRFi_2Y",
+  authDomain: "bits-alive.firebaseapp.com",
+  projectId: "bits-alive",
+  storageBucket: "bits-alive.appspot.com",
+  messagingSenderId: "544039039402",
+  appId: "1:544039039402:web:a4bc28e0f65f56ffcc4ee7"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // 🔐 Login manual
 function validarLoginEva() {
@@ -22,48 +37,28 @@ function logoutEva() {
   console.log("🔒 Sesión cerrada.");
 }
 
-// 🧠 Leer un cuento simbólico al azar
-function leerCuentoDesdeFirebase() {
-  document.getElementById("cuentoEva").innerText = "⏳ Cargando el cuento...";
+// 📚 Leer cuento desde Firebase
+async function leerCuentoDesdeFirebase() {
+  const contenedor = document.getElementById("cuentoEva");
+  contenedor.innerText = "⏳ Cargando el cuento...";
 
-  db.collection("cuentos_para_pensar")
-    .where("disponible_para_eva", "==", true)
-    .get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        document.getElementById("cuentoEva").innerText = "😢 No hay cuentos disponibles aún.";
-        return;
-      }
+  try {
+    const cuentosRef = collection(db, "cuentos_para_pensar");
+    const q = query(cuentosRef, where("disponible_para_eva", "==", true));
+    const snapshot = await getDocs(q);
 
-      const cuentos = snapshot.docs.map(doc => doc.data());
-      const index = Math.floor(Math.random() * cuentos.length);
-      const cuento = cuentos[index];
-      const contenidoArray = Array.isArray(cuento.contenido) ? cuento.contenido : [];
+    if (snapshot.empty) {
+      contenedor.innerText = "😢 No hay cuentos disponibles aún.";
+      return;
+    }
 
-      const resultado = `📖 *${cuento.titulo}*
+    const cuentos = [];
+    snapshot.forEach(doc => cuentos.push(doc.data()));
+    const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
 
-${contenidoArray.join("\n\n")}
+    const contenido = Array.isArray(cuento.contenido) ? cuento.contenido.join("\n\n") : "";
+    const moraleja = cuento.moraleja || "Sin moraleja definida.";
 
-🧠 Moraleja: ${cuento.moraleja}`;
-      document.getElementById("cuentoEva").innerText = resultado;
-    })
-    .catch(error => {
-      console.error("Error al leer cuento:", error);
-      document.getElementById("cuentoEva").innerText = "⚠️ Error al cargar el cuento.";
-    });
-}
-
-// 🔄 Al cargar la página
-window.onload = () => {
-  const usuario = localStorage.getItem("usuario");
-  if (usuario === "leandrolapeyra") {
-    document.getElementById("loginEva").style.display = "none";
-    document.getElementById("zonaEva").classList.remove("oculto");
-  }
-};
-
-// 🙈 Mostrar/Ocultar contraseña
-function mostrarOcultarPass() {
-  const passInput = document.getElementById("passEva");
-  passInput.type = passInput.type === "password" ? "text" : "password";
-}
+    contenedor.innerText = `📖 *${cuento.titulo}*\n\n${contenido}\n\n🧠 Moraleja: ${moraleja}`;
+  } catch (error) {
+    console.error("Error al leer c
