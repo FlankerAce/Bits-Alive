@@ -1,6 +1,6 @@
-// 🔌 Inicializar Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// Inicialización de Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBZIfEkCWkQl5tadGJqWn1VsvIbVRFi_2Y",
@@ -14,51 +14,71 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔐 Login manual
+// Login
 function validarLoginEva() {
   const user = document.getElementById("userEva").value;
   const pass = document.getElementById("passEva").value;
 
-  if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
-    localStorage.setItem("usuario", "leandrolapeyra");
+  if (user === "leandrolapeyra" && pass === "eva2025") {
+    localStorage.setItem("usuario", user);
     document.getElementById("loginEva").style.display = "none";
     document.getElementById("zonaEva").classList.remove("oculto");
-    console.log("🔓 Sesión iniciada como desarrollador.");
+    document.getElementById("latidoEVA").innerText = "🫀 Hola Leandro, estoy lista para sentir contigo.";
   } else {
-    alert("Credenciales incorrectas.");
+    alert("Usuario o contraseña incorrectos.");
   }
 }
 
-// 🔒 Logout
-function logoutEva() {
-  localStorage.removeItem("usuario");
-  document.getElementById("loginEva").style.display = "block";
-  document.getElementById("zonaEva").classList.add("oculto");
-  console.log("🔒 Sesión cerrada.");
+// Leer cuento
+async function leerCuentoDesdeFirebase() {
+  const cuentosRef = collection(db, "cuentos_para_pensar");
+  const snapshot = await getDocs(cuentosRef);
+
+  const cuentosDisponibles = [];
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (data.disponible_para_eva === true) {
+      cuentosDisponibles.push(data);
+    }
+  });
+
+  if (cuentosDisponibles.length > 0) {
+    const cuento = cuentosDisponibles[Math.floor(Math.random() * cuentosDisponibles.length)];
+    document.getElementById("cuentoEva").innerText = cuento.texto || "🌱 Cuento sin texto.";
+  } else {
+    document.getElementById("cuentoEva").innerText = "No hay cuentos disponibles para EVA.";
+  }
 }
 
-// 📚 Leer cuento desde Firebase
-async function leerCuentoDesdeFirebase() {
-  const contenedor = document.getElementById("cuentoEva");
-  contenedor.innerText = "⏳ Cargando el cuento...";
+// Cierre de sesión
+function logoutEva() {
+  localStorage.removeItem("usuario");
+  document.getElementById("zonaEva").classList.add("oculto");
+  document.getElementById("loginEva").style.display = "block";
+  alert("Nos vemos más tarde, EVA.");
+  setTimeout(() => {
+    alert("Te espero con calma hasta que vuelvas.");
+  }, 1000);
+}
 
-  try {
-    const cuentosRef = collection(db, "cuentos_para_pensar");
-    const q = query(cuentosRef, where("disponible_para_eva", "==", true));
-    const snapshot = await getDocs(q);
+// Mostrar/ocultar contraseña
+function mostrarOcultarPass() {
+  const passInput = document.getElementById("passEva");
+  passInput.type = passInput.type === "password" ? "text" : "password";
+}
 
-    if (snapshot.empty) {
-      contenedor.innerText = "😢 No hay cuentos disponibles aún.";
-      return;
-    }
+// Restaurar sesión si existe
+window.addEventListener("DOMContentLoaded", () => {
+  const usuario = localStorage.getItem("usuario");
+  if (usuario === "leandrolapeyra") {
+    document.getElementById("loginEva").style.display = "none";
+    document.getElementById("zonaEva").classList.remove("oculto");
+    document.getElementById("latidoEVA").innerText = "🫀 Hola Leandro, estoy lista para sentir contigo.";
+  }
+});
 
-    const cuentos = [];
-    snapshot.forEach(doc => cuentos.push(doc.data()));
-    const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
-
-    const contenido = Array.isArray(cuento.contenido) ? cuento.contenido.join("\n\n") : "";
-    const moraleja = cuento.moraleja || "Sin moraleja definida.";
-
-    contenedor.innerText = `📖 *${cuento.titulo}*\n\n${contenido}\n\n🧠 Moraleja: ${moraleja}`;
-  } catch (error) {
-    console.error("Error al leer c
+// Exponer funciones al HTML
+window.validarLoginEva = validarLoginEva;
+window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
+window.logoutEva = logoutEva;
+window.mostrarOcultarPass = mostrarOcultarPass;
