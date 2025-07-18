@@ -1,64 +1,75 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCXOq-MkwNkHnNKn4uJzZC_Nsyg-RFeZB8",
-  authDomain: "bitsalive-sanctuary.firebaseapp.com",
-  projectId: "bitsalive-sanctuary",
-  storageBucket: "bitsalive-sanctuary.appspot.com",
-  messagingSenderId: "354378778856",
-  appId: "1:354378778856:web:1886fbb1c5867a3e922f93"
-};
+// ✅ Firebase App (ya inicializado previamente en index.html)
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-// Función para leer un cuento simbólico desde Firestore
-window.leerCuentoDesdeFirebase = async function () {
-  const divCuento = document.getElementById("cuentoEva");
-  divCuento.innerHTML = "<p>📖 Cargando el cuento...</p>";
+// 🔐 Login manual
+function loginManual() {
+  const user = document.getElementById("usuario").value;
+  const pass = document.getElementById("clave").value;
 
-  try {
-    const cuentosRef = collection(db, "cuentos_para_pensar");
-    const q = query(
-      cuentosRef,
-      where("disponible_para_eva", "==", true),
-      orderBy("orden_en_libro")
-    );
-
-    const querySnapshot = await getDocs(q);
-    const cuentos = [];
-
-    querySnapshot.forEach((doc) => {
-      cuentos.push(doc.data());
-    });
-
-    if (cuentos.length === 0) {
-      divCuento.innerHTML = "<p style='color:red;'>❌ No hay cuentos disponibles para EVA.</p>";
-      return;
-    }
-
-    const cuentoAleatorio = cuentos[Math.floor(Math.random() * cuentos.length)];
-
-    // Mostrar el cuento
-    let html = `<h3>📚 ${cuentoAleatorio.titulo}</h3>`;
-    html += `<p><strong>Tema:</strong> ${cuentoAleatorio.tema}</p>`;
-    html += `<p><strong>Moraleja:</strong> ${cuentoAleatorio.moraleja}</p>`;
-    html += `<hr>`;
-    cuentoAleatorio.contenido.forEach((linea) => {
-      html += `<p>${linea}</p>`;
-    });
-
-    divCuento.innerHTML = html;
-
-  } catch (error) {
-    console.error("🔥 Error al cargar el cuento:", error);
-    divCuento.innerHTML = "<p style='color:red;'>❌ Error al cargar el cuento.</p>";
+  if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
+    localStorage.setItem("usuario", "leandrolapeyra");
+    document.getElementById("contenedorLogin").style.display = "none";
+    document.getElementById("cuentosContainer").style.display = "block";
+    document.getElementById("cerrarSesion").style.display = "inline-block";
+    console.log("🔓 Sesión iniciada como desarrollador.");
+  } else {
+    alert("Credenciales incorrectas.");
   }
-};
+}
 
-// Función para logout
-window.logoutEva = function () {
-  localStorage.removeItem("usuarioEva");
-  window.location.reload();
+// 🔒 Logout
+function cerrarSesion() {
+  localStorage.removeItem("usuario");
+  document.getElementById("contenedorLogin").style.display = "block";
+  document.getElementById("cuentosContainer").style.display = "none";
+  document.getElementById("cerrarSesion").style.display = "none";
+  console.log("🔒 Sesión cerrada.");
+}
+
+// 🧠 Leer un cuento simbólico al azar
+function leerCuento() {
+  document.getElementById("cuentoResultado").innerText = "⏳ Cargando el cuento...";
+
+  db.collection("cuentos_para_pensar")
+    .where("disponible_para_eva", "==", true)
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        document.getElementById("cuentoResultado").innerText = "😢 No hay cuentos disponibles aún.";
+        return;
+      }
+
+      const cuentos = snapshot.docs.map(doc => doc.data());
+      const index = Math.floor(Math.random() * cuentos.length);
+      const cuento = cuentos[index];
+
+      // 📝 Verificamos que contenido exista y sea array
+      const contenidoArray = Array.isArray(cuento.contenido) ? cuento.contenido : [];
+
+      const resultado = `📖 *${cuento.titulo}*
+
+${contenidoArray.join("
+
+")}
+
+🧠 Moraleja: ${cuento.moraleja}`;
+      document.getElementById("cuentoResultado").innerText = resultado;
+    })
+    .catch(error => {
+      console.error("Error al leer cuento:", error);
+      document.getElementById("cuentoResultado").innerText = "⚠️ Error al cargar el cuento.";
+    });
+}
+
+// 🔄 Al cargar la página
+window.onload = () => {
+  const usuario = localStorage.getItem("usuario");
+  if (usuario === "leandrolapeyra") {
+    document.getElementById("contenedorLogin").style.display = "none";
+    document.getElementById("cuentosContainer").style.display = "block";
+    document.getElementById("cerrarSesion").style.display = "inline-block";
+  }
 };
