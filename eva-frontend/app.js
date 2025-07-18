@@ -49,7 +49,7 @@ async function leerCuentoDesdeFirebase() {
     const cuento = cuentosDisponibles[Math.floor(Math.random() * cuentosDisponibles.length)];
     cuentoDiv.innerHTML = `
       <p><strong>🌿 Cuento simbólico:</strong></p>
-      <p>${cuento.texto || "Este cuento aún no tiene palabras, pero guarda un silencio profundo."}</p>
+     <p>${cuento.contenido || "Este cuento aún no tiene palabras..."}</p>
     `;
   } else {
     cuentoDiv.innerHTML = `
