@@ -34,6 +34,13 @@ function validarLoginEva() {
 async function leerCuentoDesdeFirebase() {
   const cuentosRef = collection(db, "cuentos_para_pensar");
   const snapshot = await getDocs(cuentosRef);
+  
+   // 🧭 Diagnóstico: mostrar cuántos documentos hay y qué contienen
+  console.log("📚 Documentos encontrados:", snapshot.size);
+  snapshot.forEach(doc => {
+    console.log("📝 Documento:", doc.id, doc.data());
+  });
+
 
   const cuentosDisponibles = [];
   snapshot.forEach(doc => {
