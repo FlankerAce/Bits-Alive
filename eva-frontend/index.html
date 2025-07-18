@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,7 +20,7 @@
             border-radius: 15px;
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
         }
-        input {
+        input, button {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
@@ -29,25 +28,36 @@
             border-radius: 5px;
         }
         button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
             background-color: #4caf50;
             color: white;
             cursor: pointer;
         }
+        #evaInterface {
+            display: none;
+            padding: 2rem;
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <!-- LOGIN -->
+    <div id="loginSection" class="login-container">
         <h2>Bienvenida, EVA</h2>
         <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
         <h3>🔒 Ingreso protegido con Firebase</h3>
-        <input type="email" id="email" placeholder="Correo electrónico" />
-        <input type="password" id="password" placeholder="Contraseña" />
-        <button onclick="login()">Ingresar</button>
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Correo electrónico" required />
+            <input type="password" id="login-password" placeholder="Contraseña" required />
+            <button type="submit">Ingresar</button>
+        </form>
     </div>
+
+    <!-- INTERFAZ EVA -->
+    <div id="evaInterface">
+        <h1>🧠 EVA ya está contigo</h1>
+        <p>Ahora podés contarle cuentos, enseñarle valores y compartir tus vivencias.</p>
+        <!-- Aquí agregaremos más secciones después (cuentos, bits simbólicos, etc.) -->
+    </div>
+
     <script type="module" src="app.js"></script>
 </body>
 </html>
