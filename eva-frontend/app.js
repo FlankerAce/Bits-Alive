@@ -18,9 +18,9 @@ function validarLoginEva() {
       console.log("✅ Sesión iniciada correctamente.");
     })
     .catch(error => {
-      console.error("⚠️ Error al iniciar sesión:", error);
-      alert("Correo o contraseña incorrectos.");
-    });
+  console.error("⚠️ Error al iniciar sesión:", error);
+  alert("Error: " + error.code + "\n" + error.message);
+});
 }
 
 // Observar cambios de sesión
