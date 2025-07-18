@@ -68,6 +68,40 @@ function mostrarLatidoEVA() {
     });
 }
 
+// 📚 Leer un cuento simbólico aleatorio
+function leerCuento() {
+  const container = document.getElementById("cuentoEVA");
+  container.innerHTML = "📖 Cargando cuento...";
+
+  db.collection("cuentos_para_pensar")
+    .get()
+    .then(snapshot => {
+      if (snapshot.empty) {
+        container.innerHTML = "😕 No hay cuentos disponibles aún.";
+        return;
+      }
+
+      const cuentos = [];
+      snapshot.forEach(doc => cuentos.push(doc.data()));
+
+      // Elegir uno aleatorio
+      const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
+
+      // Mostrar
+      let html = `<h3>📘 ${cuento.titulo}</h3>`;
+      cuento.contenido.forEach(p => {
+        html += `<p>${p}</p>`;
+      });
+      html += `<hr><p><strong>Tema:</strong> ${cuento.tema}</p>`;
+      html += `<p><strong>Moraleja:</strong> ${cuento.moraleja}</p>`;
+      container.innerHTML = html;
+    })
+    .catch(error => {
+      console.error("Error al leer cuentos:", error);
+      container.innerHTML = "💔 No se pudo cargar el cuento.";
+    });
+}
+
 // 🧠 Ejecutar al cargar la página
 window.onload = function() {
   iniciarEVA();
