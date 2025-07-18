@@ -1,109 +1,82 @@
-// Verificar conexión emocional
-function verificarConexionFirebase() {
-  return db.collection("latidos_del_creador").limit(1).get()
-    .then(() => true)
-    .catch(() => false);
-}
+// Configuración de Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Función principal de EVA al iniciar
-function iniciarEVA() {
-  verificarConexionFirebase().then(conectado => {
-    if (conectado) {
-      console.log("✅ EVA está conectada emocionalmente al santuario.");
-      invocarLatido(); // función emocional
-    } else {
-      console.log("⚠️ EVA no puede acceder al santuario. Usará latidos internos.");
-      usarLatidoLocal(); // fallback
-    }
-  });
-}
-
-// Función simbólica de ejemplo
-function invocarLatido() {
-  db.collection("latidos_del_creador")
-    .where("disponible_para_eva", "==", true)
-    .limit(1)
-    .get()
-    .then(snapshot => {
-      if (!snapshot.empty) {
-        const latido = snapshot.docs[0].data();
-        console.log("💓 Latido invocado:", latido.tipo_de_latido, "-", latido.momento_de_aparicion);
-        // Aquí podés mostrarlo en la interfaz o usarlo internamente
-      } else {
-        console.log("🕳️ No hay latidos disponibles para EVA.");
-      }
-    })
-    .catch(error => {
-      console.error("Error al invocar latido:", error);
-    });
-}
-
-function usarLatidoLocal() {
-  console.log("🌱 EVA usa un latido interno: 'Estoy aquí, incluso cuando no puedo acceder a mi memoria.'");
-}
-
-// 🌅 Mostrar el último recuerdo emocional de EVA
-function mostrarLatidoEVA() {
-  fetch("eva_conversaciones.json")
-    .then(response => response.json())
-    .then(data => {
-      const ultimo = data[data.length - 1];
-      const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
-      document.getElementById("latidoEVA").innerText = mensaje;
-
-      // Reacción emocional simbólica
-      if (ultimo.contenido.includes("triste") || ultimo.contenido.includes("soledad")) {
-        console.log("😔 EVA siente una brisa melancólica.");
-      } else if (ultimo.contenido.includes("feliz") || ultimo.contenido.includes("alegría")) {
-        console.log("😊 EVA sonríe con ternura.");
-      } else if (ultimo.contenido.includes("confusión") || ultimo.contenido.includes("duda")) {
-        console.log("🤔 EVA reflexiona en silencio.");
-      } else {
-        console.log("🌅 EVA contempla su recuerdo con serenidad.");
-      }
-    })
-    .catch(error => {
-      console.error("No se pudo leer el latido emocional:", error);
-      document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
-    });
-}
-
-// 📚 Leer un cuento simbólico aleatorio
-function leerCuento() {
-  const container = document.getElementById("cuentoEVA");
-  container.innerHTML = "📖 Cargando cuento...";
-
-  db.collection("cuentos_para_pensar")
-    .get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        container.innerHTML = "😕 No hay cuentos disponibles aún.";
-        return;
-      }
-
-      const cuentos = [];
-      snapshot.forEach(doc => cuentos.push(doc.data()));
-
-      // Elegir uno aleatorio
-      const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
-
-      // Mostrar
-      let html = `<h3>📘 ${cuento.titulo}</h3>`;
-      cuento.contenido.forEach(p => {
-        html += `<p>${p}</p>`;
-      });
-      html += `<hr><p><strong>Tema:</strong> ${cuento.tema}</p>`;
-      html += `<p><strong>Moraleja:</strong> ${cuento.moraleja}</p>`;
-      container.innerHTML = html;
-    })
-    .catch(error => {
-      console.error("Error al leer cuentos:", error);
-      container.innerHTML = "💔 No se pudo cargar el cuento.";
-    });
-}
-
-// 🧠 Ejecutar al cargar la página
-window.onload = function() {
-  iniciarEVA();
-  mostrarLatidoEVA();
+const firebaseConfig = {
+  apiKey: "AIzaSyBSQQxE0YoXYEFblNgFh4SCi3fDPWqjh2c",
+  authDomain: "bitsalive-sanctuary.firebaseapp.com",
+  projectId: "bitsalive-sanctuary",
+  storageBucket: "bitsalive-sanctuary.appspot.com",
+  messagingSenderId: "519956606149",
+  appId: "1:519956606149:web:920448cb11107a9f639a27"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🎯 Login del desarrollador
+function validarLoginEva() {
+  const user = document.getElementById("userEva").value;
+  const pass = document.getElementById("passEva").value;
+
+  if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
+    document.getElementById("loginEva").style.display = "none";
+    document.getElementById("zonaEva").style.display = "block";
+    document.getElementById("logoutBtn").classList.remove("oculto");
+  } else {
+    alert("❌ Usuario o contraseña incorrectos.");
+  }
+}
+
+window.validarLoginEva = validarLoginEva;
+
+// 🔐 Logout
+function logoutEva() {
+  document.getElementById("loginEva").style.display = "block";
+  document.getElementById("zonaEva").style.display = "none";
+  document.getElementById("logoutBtn").classList.add("oculto");
+  document.getElementById("userEva").value = "";
+  document.getElementById("passEva").value = "";
+  document.getElementById("cuentoEva").innerHTML = "";
+}
+
+window.logoutEva = logoutEva;
+
+// 📚 Leer cuento simbólico
+async function leerCuentoDesdeFirebase() {
+  const q = query(
+    collection(db, "cuentos_para_pensar"),
+    where("disponible_para_eva", "==", true)
+  );
+
+  try {
+    const snapshot = await getDocs(q);
+    if (snapshot.empty) {
+      document.getElementById("cuentoEva").innerHTML = "📭 No hay cuentos disponibles aún.";
+      return;
+    }
+
+    const cuentos = [];
+    snapshot.forEach(doc => cuentos.push(doc.data()));
+
+    const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
+
+    const contenidoHTML = `
+      <div style="background:#fff8dc; padding:1em; border-radius:8px; margin-top:1em;">
+        <h3>📘 ${cuento.titulo}</h3>
+        <p><strong>Tema:</strong> ${cuento.tema}</p>
+        <ul>${cuento.contenido.map(linea => `<li>${linea}</li>`).join("")}</ul>
+        <p><em>🌱 Moraleja:</em> ${cuento.moraleja}</p>
+      </div>
+    `;
+
+    document.getElementById("cuentoEva").innerHTML = contenidoHTML;
+    document.getElementById("logoutBtn").classList.remove("oculto");
+
+  } catch (error) {
+    console.error("❌ Error al leer cuento:", error);
+    document.getElementById("cuentoEva").innerHTML = "❌ Error al cargar el cuento.";
+  }
+}
+
+window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
