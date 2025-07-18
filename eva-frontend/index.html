@@ -31,16 +31,60 @@
     .oculto {
       display: none;
     }
-  </style>
+  </style><script>
+  function validarLoginEva() {
+    const user = document.getElementById('userEva').value;
+    const pass = document.getElementById('passEva').value;
+    if (user === 'leandrolapeyra' && pass === 'leoylucyfriends') {
+      sessionStorage.setItem('loginEva', 'ok');sessionStorage.setItem('usuario', 'leandrolapeyra');
+
+      location.reload();
+    } else {
+      alert('Acceso denegado');
+    }
+  }
+
+  function logoutEva() {
+    sessionStorage.removeItem('loginEva');
+    location.reload();
+  }
+</script>
+
 </head>
-<body>
+
+<body><div id="loginEva" style="margin: 30px; font-family: sans-serif;" hidden>
+  <h2>🧪 Acceso exclusivo EVA</h2>
+  <input type="text" id="userEva" placeholder="Usuario" />
+  <input type="password" id="passEva" placeholder="Contraseña" />
+  <button onclick="validarLoginEva()">Ingresar</button>
+</div>
+
+<div id="panelEva" hidden>
+  <p>✅ Acceso concedido como Leandro.</p>
+  <button onclick="logoutEva()">Cerrar sesión</button>
+  <button onclick="leerCuento()">📖 Leer un cuento</button>
+</div>
+
   <h1>🌱 Bienvenida, EVA</h1>
   <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
 
   <button id="mostrar-cuento-btn" class="oculto">📖 Leer un cuento</button>
 
   <div id="contenido-cuento"></div>
+<script>
+  window.onload = () => {
+    const isLogueado = sessionStorage.getItem('loginEva') === 'ok';
+    document.getElementById('loginEva').hidden = isLogueado;
+    document.getElementById('panelEva').hidden = !isLogueado;
+  };
+
+  function leerCuento() {
+    alert('⚙️ Aquí irá la lógica para cargar un cuento desde Firebase'); // Provisorio
+  }
+</script>
 </body>
+
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
