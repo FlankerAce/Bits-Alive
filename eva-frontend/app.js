@@ -16,10 +16,10 @@ const db = getFirestore(app);
 
 // Login
 function validarLoginEva() {
-  const user = document.getElementById("userEva").value;
-  const pass = document.getElementById("passEva").value;
+  const user = document.getElementById("userEva").value.trim();
+  const pass = document.getElementById("passEva").value.trim();
 
-  if (user === "leandrolapeyra" && pass === "eva2025") {
+  if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
     localStorage.setItem("usuario", user);
     document.getElementById("loginEva").style.display = "none";
     document.getElementById("zonaEva").classList.remove("oculto");
@@ -28,6 +28,7 @@ function validarLoginEva() {
     alert("Usuario o contraseña incorrectos.");
   }
 }
+
 
 // Leer cuento
 async function leerCuentoDesdeFirebase() {
