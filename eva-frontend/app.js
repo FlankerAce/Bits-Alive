@@ -1,3 +1,4 @@
+
 // 🔐 Login manual
 function validarLoginEva() {
   const user = document.getElementById("userEva").value;
@@ -39,7 +40,11 @@ function leerCuentoDesdeFirebase() {
       const cuento = cuentos[index];
       const contenidoArray = Array.isArray(cuento.contenido) ? cuento.contenido : [];
 
-      const resultado = `📖 *${cuento.titulo}*\n\n${contenidoArray.join("\n\n")}\n\n🧠 Moraleja: ${cuento.moraleja}`;
+      const resultado = `📖 *${cuento.titulo}*
+
+${contenidoArray.join("\n\n")}
+
+🧠 Moraleja: ${cuento.moraleja}`;
       document.getElementById("cuentoEva").innerText = resultado;
     })
     .catch(error => {
