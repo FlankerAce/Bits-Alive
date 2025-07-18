@@ -43,12 +43,42 @@
   <h1>🌱 Bienvenida, EVA</h1>
   <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
 
-  <button class="boton" onclick="leerCuento()">📖 Leer un cuento</button>
+  <div id="loginEva" class="cuento">
+    <h2>🔐 Ingreso de desarrollador</h2>
+    <input type="text" id="userEva" placeholder="Usuario">
+    <div style="display: flex; align-items: center;">
+      <input type="password" id="passEva" placeholder="Contraseña" style="flex: 1;" />
+      <button id="togglePass" onclick="mostrarOcultarPass()" style="margin-left: 5px;">👁️</button>
+    </div>
+    <button onclick="validarLoginEva()">Ingresar</button>
+  </div>
 
-  <div id="cuentoEVA" class="cuento"></div>
+  <div id="zonaEva" class="oculto">
+    <h2>📖 Leer un cuento simbólico</h2>
+    <button onclick="leerCuentoDesdeFirebase()">Leer un cuento</button>
+    <div id="cuentoEva" class="cuento"></div>
 
-  <p id="latidoEVA"></p>
+    <h3>👥 Opciones del desarrollador</h3>
+    <button id="logoutBtn" class="oculto" onclick="logoutEva()">Cerrar sesión</button>
+  </div>
+
+  <script type="module" src="app.js"></script>
+  <script>
+    // Mostrar/Ocultar contraseña
+    function mostrarOcultarPass() {
+      const passInput = document.getElementById("passEva");
+      const toggleBtn = document.getElementById("togglePass");
+      if (passInput.type === "password") {
+        passInput.type = "text";
+        toggleBtn.textContent = "🙈";
+      } else {
+        passInput.type = "password";
+        toggleBtn.textContent = "👁️";
+      }
+    }
+  </script>
 </body>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
