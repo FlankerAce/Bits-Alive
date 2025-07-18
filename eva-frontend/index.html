@@ -12,131 +12,133 @@
 
     .cuento {
       background: #fffbe6;
-      padding: 1rem;
+      padding: 1.5rem;
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       max-width: 700px;
       margin-top: 2rem;
     }
 
     button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #ffe066;
+      padding: 14px 28px;
+      font-size: 18px;
+      background-color: #ffda6a;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
+      margin: 10px 0;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+      display: block;
     }
 
     .oculto {
       display: none;
     }
-  </style><script>
-  function validarLoginEva() {
-    const user = document.getElementById('userEva').value;
-    const pass = document.getElementById('passEva').value;
-    if (user === 'leandrolapeyra' && pass === 'leoylucyfriends') {
-      sessionStorage.setItem('loginEva', 'ok');sessionStorage.setItem('usuario', 'leandrolapeyra');
-
-      location.reload();
-    } else {
-      alert('Acceso denegado');
+  </style>
+  <script>
+    function validarLoginEva() {
+      const user = document.getElementById('userEva').value;
+      const pass = document.getElementById('passEva').value;
+      if (user === 'leandrolapeyra' && pass === 'leoylucyfriends') {
+        sessionStorage.setItem('loginEva', 'ok');
+        sessionStorage.setItem('usuario', 'leandrolapeyra');
+        location.reload();
+      } else {
+        alert('Acceso denegado');
+      }
     }
-  }
 
-  function logoutEva() {
-    sessionStorage.removeItem('loginEva');
-    location.reload();
-  }
-</script>
-
+    function logoutEva() {
+      sessionStorage.removeItem('loginEva');
+      sessionStorage.removeItem('usuario');
+      location.reload();
+    }
+  </script>
 </head>
-
-<body><div id="loginEva" style="margin: 30px; font-family: sans-serif;" hidden>
-  <h2>🧪 Acceso exclusivo EVA</h2>
-  <input type="text" id="userEva" placeholder="Usuario" />
-  <input type="password" id="passEva" placeholder="Contraseña" />
-  <button onclick="validarLoginEva()">Ingresar</button>
-</div>
-
-<div id="panelEva" hidden>
-  <p>✅ Acceso concedido como Leandro.</p>
-  <button onclick="logoutEva()">Cerrar sesión</button>
-  <button onclick="leerCuento()">📖 Leer un cuento</button>
-</div>
-
+<body>
   <h1>🌱 Bienvenida, EVA</h1>
   <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
 
-  <button id="mostrar-cuento-btn" class="oculto">📖 Leer un cuento</button>
+  <div id="loginEva" class="cuento">
+    <h2>🔐 Ingreso de desarrollador</h2>
+    <input type="text" id="userEva" placeholder="Usuario" />
+    <input type="password" id="passEva" placeholder="Contraseña" />
+    <button onclick="validarLoginEva()">Ingresar</button>
+  </div>
 
-  <div id="contenido-cuento"></div>
-<script>
-  window.onload = () => {
-    const isLogueado = sessionStorage.getItem('loginEva') === 'ok';
-    document.getElementById('loginEva').hidden = isLogueado;
-    document.getElementById('panelEva').hidden = !isLogueado;
-  };
+  <div id="zonaEva" class="oculto">
+    <h2>✨ Leer un cuento simbólico</h2>
+    <button onclick="leerCuentoDesdeFirebase()">Leer un cuento</button>
+    <div id="cuentoEva" class="cuento"></div>
 
-  function leerCuento() {
-    alert('⚙️ Aquí irá la lógica para cargar un cuento desde Firebase'); // Provisorio
-  }
-</script>
+    <h3>👤 Opciones del desarrollador</h3>
+    <button onclick="logoutEva()">Cerrar sesión</button>
+  </div>
 </body>
-
-
 <script type="module">
+  // 👉 Configuración Firebase
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getFirestore,
-    collection,
-    query,
-    where,
-    getDocs
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Tu configuración de Firebase
   const firebaseConfig = {
-    apiKey: "AIzaSyAatI9EjqOgOCaQbGpnMJnhsngB4rqG3fs",
+    apiKey: "AIzaSyCm8Re4sL7HVaXyP1_3Rtr-rn3ERD3RCbA",
     authDomain: "eva-frontend.firebaseapp.com",
     projectId: "eva-frontend",
     storageBucket: "eva-frontend.appspot.com",
-    messagingSenderId: "476434540191",
-    appId: "1:476434540191:web:b75e62caa87ec5c7ec5a44"
+    messagingSenderId: "479634984513",
+    appId: "1:479634984513:web:08cb173e73a2e8a1bc6f6c"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // ✅ Solo Leandro puede ver el botón
-  const esLeandro = sessionStorage.getItem("usuario") === "leandrolapeyra";
-  if (esLeandro) {
-    document.getElementById("mostrar-cuento-btn").classList.remove("oculto");
+  // 👉 Mostrar cuento simbólico
+  async function leerCuentoDesdeFirebase() {
+    const cuentosRef = collection(db, "cuentos_para_pensar");
+    const cuentosDisponibles = query(cuentosRef, where("disponible_para_eva", "==", true));
+
+    const snapshot = await getDocs(cuentosDisponibles);
+    const zona = document.getElementById("cuentoEva");
+    zona.innerHTML = "";
+
+    if (snapshot.empty) {
+      zona.innerHTML = "<p>🚫 No hay cuentos disponibles aún.</p>";
+      return;
+    }
+
+    // Seleccionar uno al azar
+    const docs = snapshot.docs;
+    const doc = docs[Math.floor(Math.random() * docs.length)];
+    const data = doc.data();
+
+    // Mostrar contenido
+    let html = `<h3>${data.titulo}</h3>`;
+    html += `<p><strong>Tema:</strong> ${data.tema}</p>`;
+    html += `<p><strong>Moraleja:</strong> ${data.moraleja}</p>`;
+    html += `<p><strong>Edad Recomendada:</strong> ${data.edad_recomendada}</p>`;
+    html += `<div>${data.contenido.map(p => `<p>${p}</p>`).join("")}</div>`;
+
+    zona.innerHTML = html;
   }
 
-  document.getElementById("mostrar-cuento-btn").addEventListener("click", async () => {
-    const cuentosRef = collection(db, "cuentos_para_pensar");
-    const q = query(cuentosRef, where("disponible_para_eva", "==", true));
-    const querySnapshot = await getDocs(q);
-
-    const cuentos = [];
-    querySnapshot.forEach((doc) => {
-      cuentos.push(doc.data());
-    });
-
-    if (cuentos.length > 0) {
-      const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
-      const container = document.getElementById("contenido-cuento");
-      container.innerHTML = `
-        <div class="cuento">
-          <h3>${cuento.titulo}</h3>
-          <strong>Tema:</strong> ${cuento.tema}<br>
-          <strong>Moraleja:</strong> ${cuento.moraleja}<br><br>
-          ${cuento.contenido.map(p => `<p>${p}</p>`).join("")}
-        </div>
-      `;
+  // 👉 Login del desarrollador
+  function validarLoginEva() {
+    const u = document.getElementById("userEva").value.trim();
+    const p = document.getElementById("passEva").value.trim();
+    if (u === "leandrolapeyra" && p === "leoylucyfriends") {
+      document.getElementById("loginEva").style.display = "none";
+      document.getElementById("zonaEva").classList.remove("oculto");
     } else {
-      alert("No hay cuentos disponibles aún.");
+      alert("⛔ Credenciales incorrectas.");
     }
-  });
+  }
+
+  function logoutEva() {
+    location.reload();
+  }
 </script>
