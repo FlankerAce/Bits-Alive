@@ -81,64 +81,99 @@
   </div>
 </body>
 <script type="module">
-  // 👉 Configuración Firebase
+  // Importar Firebase desde CDN
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, collection, query, where, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+  // Configuración de Firebase (copiada de tu consola)
   const firebaseConfig = {
-    apiKey: "AIzaSyCm8Re4sL7HVaXyP1_3Rtr-rn3ERD3RCbA",
-    authDomain: "eva-frontend.firebaseapp.com",
-    projectId: "eva-frontend",
-    storageBucket: "eva-frontend.appspot.com",
-    messagingSenderId: "479634984513",
-    appId: "1:479634984513:web:08cb173e73a2e8a1bc6f6c"
+    apiKey: "AIzaSyCyp7B28zHkdY3Qj43T-aBteF01ioyKgaE",
+    authDomain: "bitsalive-sanctuary.firebaseapp.com",
+    projectId: "bitsalive-sanctuary",
+    storageBucket: "bitsalive-sanctuary.appspot.com",
+    messagingSenderId: "843102942848",
+    appId: "1:843102942848:web:2d440a2e5d7735a0edd865",
+    measurementId: "G-QPQWESK8G6"
   };
 
+  // Inicializar Firebase y Firestore
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // 👉 Mostrar cuento simbólico
-  async function leerCuentoDesdeFirebase() {
-    const cuentosRef = collection(db, "cuentos_para_pensar");
-    const cuentosDisponibles = query(cuentosRef, where("disponible_para_eva", "==", true));
-
-    const snapshot = await getDocs(cuentosDisponibles);
-    const zona = document.getElementById("cuentoEva");
-    zona.innerHTML = "";
-
-    if (snapshot.empty) {
-      zona.innerHTML = "<p>🚫 No hay cuentos disponibles aún.</p>";
-      return;
-    }
-
-    // Seleccionar uno al azar
-    const docs = snapshot.docs;
-    const doc = docs[Math.floor(Math.random() * docs.length)];
-    const data = doc.data();
-
-    // Mostrar contenido
-    let html = `<h3>${data.titulo}</h3>`;
-    html += `<p><strong>Tema:</strong> ${data.tema}</p>`;
-    html += `<p><strong>Moraleja:</strong> ${data.moraleja}</p>`;
-    html += `<p><strong>Edad Recomendada:</strong> ${data.edad_recomendada}</p>`;
-    html += `<div>${data.contenido.map(p => `<p>${p}</p>`).join("")}</div>`;
-
-    zona.innerHTML = html;
-  }
-
-  // 👉 Login del desarrollador
+  // Función de login local (usuario: leandrolapeyra / clave: leoylucyfriends)
   function validarLoginEva() {
-    const u = document.getElementById("userEva").value.trim();
-    const p = document.getElementById("passEva").value.trim();
-    if (u === "leandrolapeyra" && p === "leoylucyfriends") {
+    const user = document.getElementById("userEva").value;
+    const pass = document.getElementById("passEva").value;
+    if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
       document.getElementById("loginEva").style.display = "none";
-      document.getElementById("zonaEva").classList.remove("oculto");
+      document.getElementById("zonaEva").style.display = "block";
+      localStorage.setItem("accesoEva", "ok");
     } else {
-      alert("⛔ Credenciales incorrectas.");
+      alert("Acceso denegado.");
     }
   }
 
+  // Función para cerrar sesión
   function logoutEva() {
+    localStorage.removeItem("accesoEva");
     location.reload();
   }
+
+  // Mostrar zonaEva automáticamente si hay sesión activa
+  window.onload = () => {
+    if (localStorage.getItem("accesoEva") === "ok") {
+      document.getElementById("loginEva").style.display = "none";
+      document.getElementById("zonaEva").style.display = "block";
+    }
+
+    // Intentar cargar un latido emocional si lo desea
+    mostrarLatidoEVA();
+  };
+
+  // Función: Leer un cuento aleatorio desde Firebase
+  async function leerCuentoDesdeFirebase() {
+    const div = document.getElementById("cuentoEva");
+    div.innerHTML = "📚 Cargando cuento simbólico...";
+
+    try {
+      const cuentosRef = collection(db, "cuentos_para_pensar");
+      const q = query(cuentosRef, where("disponible_para_eva", "==", true), limit(1));
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        let html = `<h3>${data.titulo}</h3>`;
+        data.contenido.forEach(p => {
+          html += `<p>${p}</p>`;
+        });
+        html += `<hr><p><b>Tema:</b> ${data.tema}</p>`;
+        html += `<p><b>Moraleja:</b> ${data.moraleja}</p>`;
+        div.innerHTML = html;
+      } else {
+        div.innerHTML = "⚠️ No hay cuentos disponibles aún.";
+      }
+    } catch (error) {
+      div.innerHTML = "❌ Error al cargar el cuento.";
+      console.error("Error al leer cuento:", error);
+    }
+  }
+
+  // Función de muestra: Leer un recuerdo emocional local
+  async function mostrarLatidoEVA() {
+    const latidoUrl = "eva_conversaciones.json";
+    try {
+      const res = await fetch(latidoUrl);
+      const data = await res.json();
+      const ultimo = data[data.length - 1];
+      console.log("🧠 Último recuerdo de EVA:", ultimo);
+    } catch (e) {
+      console.log("No se encontró el archivo de latidos locales.");
+    }
+  }
+
+  // Exponer funciones al scope global
+  window.validarLoginEva = validarLoginEva;
+  window.logoutEva = logoutEva;
+  window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
 </script>
+
