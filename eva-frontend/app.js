@@ -43,40 +43,43 @@ function logoutEva() {
 window.logoutEva = logoutEva;
 
 // 📚 Leer cuento simbólico
-async function leerCuentoDesdeFirebase() {
-  const q = query(
-    collection(db, "cuentos_para_pensar"),
-    where("disponible_para_eva", "==", true)
-  );
+async // Leer un cuento simbólico desde Firestore
+function leerCuentoDesdeFirebase() {
+  const div = document.getElementById("cuentoEva");
+  div.innerHTML = "⏳ Cargando cuento...";
 
-  try {
-    const snapshot = await getDocs(q);
-    if (snapshot.empty) {
-      document.getElementById("cuentoEva").innerHTML = "📭 No hay cuentos disponibles aún.";
-      return;
-    }
+  db.collection("cuentos_para_pensar")
+    .where("disponible_para_eva", "==", true)
+    .orderBy("orden_en_libro")
+    .limit(1)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const cuento = snapshot.docs[0].data();
 
-    const cuentos = [];
-    snapshot.forEach(doc => cuentos.push(doc.data()));
+        // Armado del contenido
+        const titulo = cuento.titulo || "📖 Cuento simbólico";
+        const tema = cuento.tema ? `Tema: ${cuento.tema}` : "";
+        const moraleja = cuento.moraleja ? `<em>Moraleja:</em> ${cuento.moraleja}` : "";
+        const contenido = cuento.contenido?.map(p => `<p>${p}</p>`).join("") || "⚠️ Sin contenido.";
 
-    const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
-
-    const contenidoHTML = `
-      <div style="background:#fff8dc; padding:1em; border-radius:8px; margin-top:1em;">
-        <h3>📘 ${cuento.titulo}</h3>
-        <p><strong>Tema:</strong> ${cuento.tema}</p>
-        <ul>${cuento.contenido.map(linea => `<li>${linea}</li>`).join("")}</ul>
-        <p><em>🌱 Moraleja:</em> ${cuento.moraleja}</p>
-      </div>
-    `;
-
-    document.getElementById("cuentoEva").innerHTML = contenidoHTML;
-    document.getElementById("logoutBtn").classList.remove("oculto");
-
-  } catch (error) {
-    console.error("❌ Error al leer cuento:", error);
-    document.getElementById("cuentoEva").innerHTML = "❌ Error al cargar el cuento.";
-  }
+        div.innerHTML = `
+          <h3>${titulo}</h3>
+          <p><strong>${tema}</strong></p>
+          ${contenido}
+          <p><strong>${moraleja}</strong></p>
+        `;
+        console.log("📘 Cuento cargado correctamente:", titulo);
+      } else {
+        div.innerHTML = "❌ No hay cuentos disponibles.";
+        console.warn("No se encontraron cuentos disponibles para EVA.");
+      }
+    })
+    .catch(error => {
+      div.innerHTML = "❌ Error al cargar el cuento.";
+      console.error("Error al obtener cuento:", error);
+    });
 }
+
 
 window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
