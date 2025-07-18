@@ -1,31 +1,51 @@
+// Firebase config (esto ya lo tenés cargado correctamente en firebaseConfig.js)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { firebaseConfig } from './firebaseConfig.js';
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCYpTP82zhkdY3Qj43T-aBIef01ioyKgaE",
-  authDomain: "bitsalive-sanctuary.firebaseapp.com",
-  projectId: "bitsalive-sanctuary",
-  storageBucket: "bitsalive-sanctuary.firebasestorage.app",
-  messagingSenderId: "843102942848",
-  appId: "1:843102942848:web:2d440a2e5d7735a0edd865",
-  measurementId: "G-QPQWESK8G6"
-};
-
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-window.login = function () {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+// Referencias DOM
+const loginForm = document.getElementById("login-form");
+const loginSection = document.getElementById("loginSection");
+const evaInterface = document.getElementById("evaInterface");
+
+// Evento al enviar formulario
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = loginForm["login-email"].value;
+  const password = loginForm["login-password"].value;
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
-      alert("Bienvenido a EVA");
-      // Redirigir o activar funciones de EVA
+      const user = userCredential.user;
+
+      if (user.email === "bitsalive2025@gmail.com") {
+        alert("Bienvenido a EVA");
+        loginSection.style.display = "none";
+        evaInterface.style.display = "block";
+      } else {
+        alert("Este acceso está protegido. No tenés autorización.");
+        auth.signOut();
+      }
     })
     .catch((error) => {
-      alert("Error: " + error.message);
+      alert("Error de inicio de sesión: " + error.message);
     });
-};
+});
+
+// Verificar si ya está logueado
+onAuthStateChanged(auth, (user) => {
+  if (user && user.email === "bitsalive2025@gmail.com") {
+    loginSection.style.display = "none";
+    evaInterface.style.display = "block";
+  }
+});
