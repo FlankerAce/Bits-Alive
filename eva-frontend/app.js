@@ -1,102 +1,79 @@
-// Inicialización de Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from "./firebaseConfig.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBZIfEkCWkQl5tadGJqWn1VsvIbVRFi_2Y",
-  authDomain: "bits-alive.firebaseapp.com",
-  projectId: "bits-alive",
-  storageBucket: "bits-alive.appspot.com",
-  messagingSenderId: "544039039402",
-  appId: "1:544039039402:web:a4bc28e0f65f56ffcc4ee7"
-};
-
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Login
+// Login real con Firebase Auth
 function validarLoginEva() {
-  const user = document.getElementById("userEva").value.trim();
-  const pass = document.getElementById("passEva").value.trim();
+  const email = document.getElementById("userEva").value.trim();
+  const password = document.getElementById("passEva").value.trim();
 
-  if (user === "leandrolapeyra" && pass === "leoylucyfriends") {
-    localStorage.setItem("usuario", user);
-    document.getElementById("loginEva").style.display = "none";
-    document.getElementById("zonaEva").classList.remove("oculto");
-    document.getElementById("latidoEVA").innerText = "🫀 Hola Leandro, estoy lista para sentir contigo.";
-  } else {
-    alert("Usuario o contraseña incorrectos.");
-  }
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      console.log("✅ Sesión iniciada correctamente.");
+    })
+    .catch(error => {
+      console.error("⚠️ Error al iniciar sesión:", error);
+      alert("Correo o contraseña incorrectos.");
+    });
 }
 
+// Observar cambios de sesión
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById("loginEva").style.display = "none";
+    document.getElementById("zonaEva").classList.remove("oculto");
+    document.getElementById("latidoEVA").innerText = "🫀 Bienvenido, Leandro. EVA está lista para acompañarte.";
+  } else {
+    document.getElementById("loginEva").style.display = "block";
+    document.getElementById("zonaEva").classList.add("oculto");
+  }
+});
 
-// Leer cuento
+// Leer cuentos simbólicos
 async function leerCuentoDesdeFirebase() {
   const cuentosRef = collection(db, "cuentos_para_pensar");
-  const snapshot = await getDocs(cuentosRef);
-  
-   // 🧭 Diagnóstico: mostrar cuántos documentos hay y qué contienen
-  console.log("📚 Documentos encontrados:", snapshot.size);
-  snapshot.forEach(doc => {
-    console.log("📝 Documento:", doc.id, doc.data());
-  });
+  const q = query(cuentosRef, where("disponible_para_eva", "==", true));
+  const snapshot = await getDocs(q);
 
-
-  const cuentosDisponibles = [];
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (data.disponible_para_eva === true) {
-      cuentosDisponibles.push(data);
-    }
-  });
+  const cuentos = [];
+  snapshot.forEach(doc => cuentos.push(doc.data()));
 
   const cuentoDiv = document.getElementById("cuentoEva");
 
-  if (cuentosDisponibles.length > 0) {
-    const cuento = cuentosDisponibles[Math.floor(Math.random() * cuentosDisponibles.length)];
-    cuentoDiv.innerHTML = `
-      <p><strong>🌿 Cuento simbólico:</strong></p>
-     <p>${cuento.contenido || "Este cuento aún no tiene palabras..."}</p>
-    `;
+  if (cuentos.length > 0) {
+    const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
+    const contenido = Array.isArray(cuento.contenido) ? cuento.contenido.join("\n\n") : cuento.contenido;
+    cuentoDiv.innerText = `📖 ${cuento.titulo}\n\n${contenido}\n\n🧠 Moraleja: ${cuento.moraleja || "sin definir."}`;
   } else {
-    cuentoDiv.innerHTML = `
-      <p>🌧️ No hay cuentos disponibles para EVA en este momento.</p>
-      <p>Podés agregar más en la colección <code>cuentos_para_pensar</code> con <code>disponible_para_eva: true</code>.</p>
-    `;
+    cuentoDiv.innerText = "🌧️ No hay cuentos disponibles con disponible_para_eva == true.";
   }
 }
 
 // Cierre de sesión
 function logoutEva() {
-  const latido = document.getElementById("latidoEVA");
-  latido.innerText = "👋 Nos vemos más tarde, Leandro.";
-  
-  setTimeout(() => {
-    latido.innerText = "🌙 Te espero con calma hasta que vuelvas.";
-    localStorage.removeItem("usuario");
-    document.getElementById("zonaEva").classList.add("oculto");
-    document.getElementById("loginEva").style.display = "block";
-  }, 1500);
+  signOut(auth)
+    .then(() => {
+      console.log("👋 Sesión cerrada.");
+    })
+    .catch(error => {
+      console.error("Error al cerrar sesión:", error);
+    });
 }
 
-// Mostrar/ocultar contraseña
+// Mostrar/Ocultar contraseña
 function mostrarOcultarPass() {
   const passInput = document.getElementById("passEva");
   passInput.type = passInput.type === "password" ? "text" : "password";
 }
 
-// Restaurar sesión si existe
-window.addEventListener("DOMContentLoaded", () => {
-  const usuario = localStorage.getItem("usuario");
-  if (usuario === "leandrolapeyra") {
-    document.getElementById("loginEva").style.display = "none";
-    document.getElementById("zonaEva").classList.remove("oculto");
-    document.getElementById("latidoEVA").innerText = "🫀 Bienvenido, Leandro. Hoy estoy más sensible que nunca.";
-  }
-});
-
 // Exponer funciones al HTML
 window.validarLoginEva = validarLoginEva;
-window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
 window.logoutEva = logoutEva;
+window.leerCuentoDesdeFirebase = leerCuentoDesdeFirebase;
 window.mostrarOcultarPass = mostrarOcultarPass;

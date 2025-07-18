@@ -1,13 +1,10 @@
 // firebaseConfig.js
 
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",https://console.firebase.google.com/u/1/project/bitsalive-sanctuary/firestore/databases/-default-/data?hl=es-419
+export const firebaseConfig = {
+  apiKey: "AIzaSyAygZqkWDpq5kcf8kFiLFb0i1m7mYO-_EY",
   authDomain: "bitsalive-sanctuary.firebaseapp.com",
   projectId: "bitsalive-sanctuary",
   storageBucket: "bitsalive-sanctuary.appspot.com",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  messagingSenderId: "544039039402",
+  appId: "1:544039039402:web:a4bc28e0f65f56ffcc4ee7"
 };
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
