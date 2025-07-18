@@ -1,58 +1,98 @@
-<!DOCTYPE html>
-<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EVA Frontend</title>
-  <link rel="icon" href="../assets/icons/favicon.ico" type="image/x-icon">
-  <meta name="theme-color" content="#B0D0FF">
+  <title>BitsAlive - EVA</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #111;
-      color: #ccc;
-      padding: 40px;
+      background-color: #f5f5f5;
+      padding: 2rem;
+      color: #333;
     }
-    #latidoEVA {
-      margin-top: 20px;
-      padding: 20px;
-      background-color: #222;
-      border-left: 4px solid #B0D0FF;
+
+    .cuento {
+      background: #fffbe6;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 700px;
+      margin-top: 2rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #ffe066;
+      border: none;
       border-radius: 8px;
-      font-style: italic;
+      cursor: pointer;
+    }
+
+    .oculto {
+      display: none;
     }
   </style>
 </head>
-
 <body>
+  <h1>🌱 Bienvenida, EVA</h1>
+  <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
 
-  <header style="text-align:center;">
-    <h1>EVA Frontend</h1>
-    <p>Este módulo muestra el último recuerdo emocional de EVA.</p>
-  </header>
+  <button id="mostrar-cuento-btn" class="oculto">📖 Leer un cuento</button>
 
-  <section>
-    <h2>🌅 Latido emocional</h2>
-    <div id="latidoEVA">Cargando recuerdo...</div>
-  </section>
-
-  <script>
-    function mostrarLatidoEVA() {
-      fetch("eva_conversaciones.json")
-        .then(response => response.json())
-        .then(data => {
-          const ultimo = data[data.length - 1];
-          const mensaje = `${ultimo.fecha} — ${ultimo.autor}: ${ultimo.contenido}`;
-          document.getElementById("latidoEVA").innerText = mensaje;
-        })
-        .catch(error => {
-          console.error("No se pudo leer el latido emocional:", error);
-          document.getElementById("latidoEVA").innerText = "🌅 EVA aún no tiene recuerdos guardados.";
-        });
-    }
-
-    window.onload = mostrarLatidoEVA;
-  </script>
-
+  <div id="contenido-cuento"></div>
 </body>
-</html>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // Tu configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAatI9EjqOgOCaQbGpnMJnhsngB4rqG3fs",
+    authDomain: "eva-frontend.firebaseapp.com",
+    projectId: "eva-frontend",
+    storageBucket: "eva-frontend.appspot.com",
+    messagingSenderId: "476434540191",
+    appId: "1:476434540191:web:b75e62caa87ec5c7ec5a44"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ✅ Solo Leandro puede ver el botón
+  const esLeandro = sessionStorage.getItem("usuario") === "leandrolapeyra";
+  if (esLeandro) {
+    document.getElementById("mostrar-cuento-btn").classList.remove("oculto");
+  }
+
+  document.getElementById("mostrar-cuento-btn").addEventListener("click", async () => {
+    const cuentosRef = collection(db, "cuentos_para_pensar");
+    const q = query(cuentosRef, where("disponible_para_eva", "==", true));
+    const querySnapshot = await getDocs(q);
+
+    const cuentos = [];
+    querySnapshot.forEach((doc) => {
+      cuentos.push(doc.data());
+    });
+
+    if (cuentos.length > 0) {
+      const cuento = cuentos[Math.floor(Math.random() * cuentos.length)];
+      const container = document.getElementById("contenido-cuento");
+      container.innerHTML = `
+        <div class="cuento">
+          <h3>${cuento.titulo}</h3>
+          <strong>Tema:</strong> ${cuento.tema}<br>
+          <strong>Moraleja:</strong> ${cuento.moraleja}<br><br>
+          ${cuento.contenido.map(p => `<p>${p}</p>`).join("")}
+        </div>
+      `;
+    } else {
+      alert("No hay cuentos disponibles aún.");
+    }
+  });
+</script>
