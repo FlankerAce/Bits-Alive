@@ -30,6 +30,9 @@ loginForm.addEventListener("submit", (e) => {
 
       if (user.email === "bitsalive2025@gmail.com") {
         alert("Bienvenido a EVA");
+document.getElementById("loginSection").style.display = "none";
+document.getElementById("evaInterface").style.display = "block";
+
         loginSection.style.display = "none";
         evaInterface.style.display = "block";
       } else {
