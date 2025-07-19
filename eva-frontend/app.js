@@ -6,13 +6,15 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
 // CONFIGURACIÓN EMBEBIDA (sin archivo externo)
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCypTP82zhkdY3Qj43T-aBIef01i0yKgaE",
+  apiKey: "AIzaSyCYpTP82zhkdY3Qj43T-aBIef01ioyKgaE",
   authDomain: "bitsalive-sanctuary.firebaseapp.com",
   projectId: "bitsalive-sanctuary",
-  storageBucket: "bitsalive-sanctuary.appspot.com",
+  storageBucket: "bitsalive-sanctuary.firebasestorage.app",
   messagingSenderId: "843102942848",
-  appId: "1:843102942848:web:2d440a2e5d7735a0edd865"
+  appId: "1:843102942848:web:2d440a2e5d7735a0edd865",
+  measurementId: "G-QPQWESK8G6"
 };
 
 // Inicializar Firebase
