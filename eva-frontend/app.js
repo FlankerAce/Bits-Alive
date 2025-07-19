@@ -1,4 +1,3 @@
-// Firebase config (esto ya lo tenés cargado correctamente en firebaseConfig.js)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import {
   getAuth,
@@ -12,17 +11,17 @@ import { firebaseConfig } from './firebaseConfig.js';
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Referencias DOM
+// Elementos HTML
 const loginForm = document.getElementById("login-form");
 const loginSection = document.getElementById("loginSection");
 const evaInterface = document.getElementById("evaInterface");
 
-// Evento al enviar formulario
+// Evento del formulario de login
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const email = loginForm["login-email"].value;
-  const password = loginForm["login-password"].value;
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
@@ -30,7 +29,6 @@ loginForm.addEventListener("submit", (e) => {
 
       if (user.email === "bitsalive2025@gmail.com") {
         alert("Bienvenido a EVA");
-        // Mostrar EVA y ocultar login
         loginSection.style.display = "none";
         evaInterface.style.display = "block";
       } else {
@@ -43,7 +41,7 @@ loginForm.addEventListener("submit", (e) => {
     });
 });
 
-// Verificar si ya está logueado
+// Si ya está logueado y recarga la página
 onAuthStateChanged(auth, (user) => {
   if (user && user.email === "bitsalive2025@gmail.com") {
     loginSection.style.display = "none";
