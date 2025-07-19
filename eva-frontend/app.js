@@ -5,27 +5,39 @@ import {
   onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-import { firebaseConfig } from './firebaseConfig.js';
+// CONFIGURACIÓN EMBEBIDA (sin archivo externo)
+const firebaseConfig = {
+  apiKey: "AIzaSyCypTP82zhkdY3Qj43T-aBIef01i0yKgaE",
+  authDomain: "bitsalive-sanctuary.firebaseapp.com",
+  projectId: "bitsalive-sanctuary",
+  storageBucket: "bitsalive-sanctuary.appspot.com",
+  messagingSenderId: "843102942848",
+  appId: "1:843102942848:web:2d440a2e5d7735a0edd865"
+};
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
+console.log("? app.js se está ejecutando");
 
 // Elementos HTML
 const loginForm = document.getElementById("login-form");
 const loginSection = document.getElementById("loginSection");
 const evaInterface = document.getElementById("evaInterface");
 
-// Evento del formulario de login
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
+  console.log("?? Intentando login con:", email);
+
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       const user = userCredential.user;
+      console.log("? Login exitoso:", user.email);
 
       if (user.email === "bitsalive2025@gmail.com") {
         alert("Bienvenido a EVA");
@@ -37,13 +49,14 @@ loginForm.addEventListener("submit", (e) => {
       }
     })
     .catch((error) => {
+      console.error("? Error de login:", error.message);
       alert("Error de inicio de sesión: " + error.message);
     });
 });
 
-// Si ya está logueado y recarga la página
 onAuthStateChanged(auth, (user) => {
   if (user && user.email === "bitsalive2025@gmail.com") {
+    console.log("?? Usuario ya logueado:", user.email);
     loginSection.style.display = "none";
     evaInterface.style.display = "block";
   }
