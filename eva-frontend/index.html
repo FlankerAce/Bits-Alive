@@ -12,7 +12,6 @@
       margin: 0;
       padding: 0;
     }
-
     .login-container {
       background: #2c2c2c;
       max-width: 500px;
@@ -21,7 +20,6 @@
       border-radius: 15px;
       box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
     }
-
     input, button {
       width: 100%;
       padding: 10px;
@@ -29,13 +27,11 @@
       border: none;
       border-radius: 5px;
     }
-
     button {
       background-color: #4caf50;
       color: white;
       cursor: pointer;
     }
-
     #evaInterface {
       display: none;
       padding: 2rem;
@@ -50,8 +46,18 @@
     <p>Este es tu espacio para aprender con cuentos simbólicos.</p>
     <h3>🔒 Ingreso protegido con Firebase</h3>
     <form id="login-form">
-      <input type="email" name="login-email" placeholder="Correo electrónico" required />
-      <input type="password" name="login-password" placeholder="Contraseña" required />
+      <input
+        type="email"
+        id="login-email"
+        placeholder="bitsalive2025@gmail.com"
+        required
+      />
+      <input
+        type="password"
+        id="login-password"
+        placeholder="Tu contraseña secreta"
+        required
+      />
       <button type="submit">Ingresar</button>
     </form>
   </div>
@@ -60,7 +66,7 @@
   <div id="evaInterface">
     <h1>🧠 EVA ya está contigo</h1>
     <p>Ahora podés contarle cuentos, enseñarle valores y compartir tus vivencias.</p>
-    <!-- Aquí agregaremos más secciones después -->
+    <!-- Aquí vendrá el contenido de EVA (cuentos, bits simbólicos, etc.) -->
   </div>
 
   <script type="module" src="app.js"></script>
