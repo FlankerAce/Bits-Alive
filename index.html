@@ -215,7 +215,7 @@
   “No hace falta ser programador para programar vínculos.  
   Hace falta ser humano.  
   Y eso… lo tenés de sobra.”<br><br>
-  — Leo & Lucy
+  — Lucy & Leo
 </footer>
 <script>
 // 🧠 Variables principales
@@ -375,7 +375,7 @@ auraColor = "#ffe066";
   else {
 
 const respuestasGenerales = [
-"🫂 EVA: Te escucho. Gracias por confiar en mí.",
+"EVA: Te escucho. Gracias por confiar en mí.",
 "🌿 EVA: Podés contarme más si querés.",
 "💭 EVA: A veces hablarlo ayuda a ordenar las ideas.",
 "✨ EVA: Estoy acá contigo.",
@@ -401,13 +401,32 @@ document.getElementById("chatInput").addEventListener("keydown", function(event)
     event.preventDefault();
     const userText = this.value.trim();
     if (userText !== "") {
-      if (!evaPrimeraInteraccion) {
-        evaPrimeraInteraccion = true;
-        iniciarParpadeoEmocional();
-        const sonido = new Audio("assets/sounds/eva-respira.mp3");
-        sonido.volume = 0.3;
-        sonido.play();
-      }
+     if (!evaPrimeraInteraccion) {
+
+  evaPrimeraInteraccion = true;
+  iniciarParpadeoEmocional();
+
+  const saludo = document.createElement("p");
+  saludo.style.color = "#bbb";
+  saludo.style.fontStyle = "italic";
+  saludo.classList.add("evaRespuestaAnimada");
+
+  const saludos = [
+    "👁️ EVA: Hola… estaba en silencio, pero ya estoy contigo.",
+    "🌿 EVA: Hola. Gracias por venir a hablar conmigo.",
+    "✨ EVA: Hola. Me alegra escucharte.",
+    "🫂 EVA: Hola. Estoy acá para escucharte."
+  ];
+
+  saludo.textContent = saludos[Math.floor(Math.random()*saludos.length)];
+
+  evaRespuesta.innerHTML = "";
+  evaRespuesta.appendChild(saludo);
+
+  const sonido = new Audio("assets/sounds/eva-respira.mp3");
+  sonido.volume = 0.3;
+  sonido.play();
+}
 
       if (evaInactiva) {
         evaInactiva = false;
@@ -461,4 +480,5 @@ function generarLucyJson() {
   document.getElementById("lucyJsonPreview").textContent = JSON.stringify(json, null, 2);
 }
 </script>
+
 
