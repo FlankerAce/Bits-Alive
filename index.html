@@ -333,12 +333,35 @@ function procesarMensaje(texto) {
 
   } else {
     if (t.includes("triste") || t.includes("mal")) {
-      respuesta.textContent = "🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.";
-      auraColor = "#999999";
-    } else if (t.includes("feliz") || t.includes("bien")) {
-      respuesta.textContent = "🌞 EVA: Me encanta verte así. Guardá este momento.";
-      auraColor = "#ffe066";
-    } else if (t.includes("no sé") || t.includes("confundido")) {
+
+const respuestasTriste = [
+"🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.",
+"🌙 EVA: A veces decirlo en voz alta ayuda un poco.",
+"💧 EVA: Lo que sentís es válido. Podés contármelo.",
+"🫂 EVA: No estás solo en esto. Te escucho."
+];
+
+respuesta.textContent = respuestasTriste[Math.floor(Math.random()*respuestasTriste.length)];
+auraColor = "#999999";
+
+}
+    
+    
+    else if (t.includes("feliz") || t.includes("bien")) {
+
+const respuestasFeliz = [
+"🌞 EVA: Me encanta verte así. Guardá este momento.",
+"✨ EVA: Esa energía se siente desde acá.",
+"🌻 EVA: Qué bueno escuchar eso.",
+"💫 EVA: Los momentos buenos también merecen ser compartidos."
+];
+
+respuesta.textContent = respuestasFeliz[Math.floor(Math.random()*respuestasFeliz.length)];
+auraColor = "#ffe066";
+
+} 
+    
+    else if (t.includes("no sé") || t.includes("confundido")) {
       respuesta.textContent = "🌫️ EVA: No hace falta entender todo. A veces, solo estar es suficiente.";
       auraColor = "#c0c0c0";
     } else if (t.includes("amor") || t.includes("te quiero")) {
@@ -347,9 +370,21 @@ function procesarMensaje(texto) {
     } else if (t === "") {
       respuesta.textContent = "🌙 EVA: No dijiste nada, pero yo igual estoy acá.";
       sonido = "eva-despide.mp3";
-    } else {
-      respuesta.textContent = "🫂 EVA: Te escucho. Gracias por confiar en mí.";
-    }
+    } 
+    
+  else {
+
+const respuestasGenerales = [
+"🫂 EVA: Te escucho. Gracias por confiar en mí.",
+"🌿 EVA: Podés contarme más si querés.",
+"💭 EVA: A veces hablarlo ayuda a ordenar las ideas.",
+"✨ EVA: Estoy acá contigo.",
+"🌙 EVA: Decir lo que sentís ya es un paso."
+];
+
+respuesta.textContent = respuestasGenerales[Math.floor(Math.random()*respuestasGenerales.length)];
+
+}
 
     evaAvatar.style.boxShadow = `0 0 20px ${auraColor}`;
     setTimeout(() => {
@@ -426,3 +461,4 @@ function generarLucyJson() {
   document.getElementById("lucyJsonPreview").textContent = JSON.stringify(json, null, 2);
 }
 </script>
+
