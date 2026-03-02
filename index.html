@@ -331,7 +331,28 @@ function procesarMensaje(texto) {
       }, 8000);
     }, 2000);
 
-  } else {
+  } else if (
+  t.includes("hola") ||
+  t.includes("buenas") ||
+  t.includes("buenos días") ||
+  t.includes("buenas tardes") ||
+  t.includes("buenas noches") ||
+  t.includes("qué tal") ||
+  t.includes("como estas")
+) {
+
+const saludos = [
+"👁️ EVA: Hola. Me alegra escucharte.",
+"🌿 EVA: Hola. Estoy aquí contigo.",
+"✨ EVA: Hola. Gracias por venir a hablar conmigo.",
+"🫂 EVA: Hola. ¿Qué parte de vos quiere hablar hoy?"
+];
+
+respuesta.textContent = saludos[Math.floor(Math.random()*saludos.length)];
+auraColor = "#fcecc3";
+
+}
+  else {
     if (t.includes("triste") || t.includes("mal")) {
 
 const respuestasTriste = [
@@ -480,5 +501,6 @@ function generarLucyJson() {
   document.getElementById("lucyJsonPreview").textContent = JSON.stringify(json, null, 2);
 }
 </script>
+
 
 
