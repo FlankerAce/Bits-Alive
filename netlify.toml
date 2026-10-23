@@ -1,0 +1,9 @@
+[build]
+  command = "node scripts/build-dist.mjs"
+  publish = "dist"
+
+[[redirects]]
+  from = "https://www.bits-alive.com/*"
+  to = "https://bits-alive.com/:splat"
+  status = 301
+  force = true
