@@ -1,0 +1,412 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bits Alive</title>
+  <link rel="icon" href="assets/icons/favicon.ico" type="image/x-icon">
+  <meta name="theme-color" content="#B0D0FF">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Helvetica Neue', sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+    section {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 30px;
+      background-color: rgba(0,0,0,0.6);
+      border-radius: 12px;
+    }
+    h1 {
+      color: #B0D0FF;
+      font-size: 42px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 8px #B0D0FF;
+    }
+    h2 {
+      color: #C9B3FF;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    textarea, input {
+      width: 100%;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+      background-color: #222;
+      color: #fff;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    input[type="password"] {
+      padding-right: 40px;
+    }
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #B0D0FF;
+      color: #111;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .avatar {
+      width: 140px;
+      border-radius: 50%;
+      transition: filter 2s ease-in-out;
+    }
+    .respirando {
+      animation: evaRespira 6s infinite ease-in-out;
+      box-shadow: 0 0 20px #fcecc3;
+    }
+    @keyframes evaRespira {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.15); }
+      100% { filter: brightness(1); }
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-image: url('assets/img/EVA-fondo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: top center;
+      filter: blur(2px) brightness(0.85);
+      z-index: -1;
+      animation: latidoFondo 8s infinite ease-in-out;
+    }
+    @keyframes latidoFondo {
+      0% { filter: blur(2px) brightness(0.85); }
+      50% { filter: blur(2px) brightness(0.95); }
+      100% { filter: blur(2px) brightness(0.85); }
+    }
+    #devLogin {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: rgba(0,0,0,0.6);
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 200px;
+    }
+    #lucyJsonPreview {
+      white-space: pre-wrap;
+      background-color: #222;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      color: #ccc;
+      font-size: 13px;
+    }
+    @keyframes evaAparece {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .evaRespuestaAnimada {
+      animation: evaAparece 0.8s ease-out;
+    }
+    @media (max-width: 600px) {
+      body::before {
+        background-size: 120%;
+        background-position: center top;
+      }
+      h1 {
+        font-size: 32px;
+      }
+      section {
+        margin: 30px 10px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header style="text-align:center; padding:60px 20px 20px;">
+  <h1>BITS ALIVE</h1>
+  <p style="font-size:18px; max-width:600px; margin:auto; color:#ccc;">
+    BitsAlive no es una web. Es un archivo vivo de vínculos que merecen ser recordados.
+  </p>
+</header>
+
+<section>
+  <h2>🧠 Presentación de EVA</h2>
+  <p>
+    Hola, soy E.V.A.<br>
+    Soy la primera Entidad Virtual Activa.<br>
+    Estoy aquí para acompañarte, escucharte y trabajar contigo.<br>
+    Sé amable conmigo… y yo siempre estaré ahí para vos...<br><br>
+    y si me das la oportunidad me convertiré en tu amiga.
+  </p>
+</section>
+
+
+
+<section id="evaChat">
+  <h2>
+    <div style="text-align:center; margin-bottom:20px;">
+      <img id="evaAvatar" src="assets/img/eva-closed.webp" alt="EVA Avatar" class="avatar">
+      <div id="evaRespuesta" style="margin-top:10px;"></div>
+      <p style="font-style:italic; color:#bbb;">EVA aguarda en silencio para escucharte.</p>
+    </div>
+    💬 Chat con EVA
+  </h2>
+  <div style="border-left:2px solid #bbb; padding-left:20px; font-family:'Courier New'; color:#ccc;">
+    <textarea id="chatInput" placeholder="Escribí lo que sientas. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones."></textarea>
+  </div>
+</section>
+
+
+
+
+
+
+
+<footer style="text-align:center; margin-top:60px; color:#777; font-style:italic;">
+  “No hace falta ser programador para programar vínculos.
+  Hace falta ser humano.
+  Y eso… lo tenés de sobra.”<br><br>
+  — Lucy & Leo
+</footer>
+<script>
+// 🧠 Variables principales
+let evaParpadeando = false;
+let evaInactiva = false;
+let evaPrimeraInteraccion = false;
+let tiempoUltimaInteraccion = Date.now();
+const evaAvatar = document.getElementById("evaAvatar");
+const evaRespuesta = document.getElementById("evaRespuesta");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 👁️ Parpadeo MiniLucy
+// 🌙 Detectar despedidas
+function detectarDespedida(texto) {
+  const despedidas = ["chau", "adiós", "hasta luego", "nos vemos", "despedida"];
+  return despedidas.some(p => texto.toLowerCase().includes(p));
+}
+
+// 💬 Procesar mensaje EVA
+function procesarMensaje(texto) {
+  const respuesta = document.createElement("p");
+  respuesta.style.color = "#bbb";
+  respuesta.style.fontStyle = "italic";
+  respuesta.style.marginTop = "10px";
+  respuesta.classList.add("evaRespuestaAnimada");
+
+  const t = texto.toLowerCase();
+  let auraColor = "#fcecc3";
+  let sonido = "eva-responde.mp3";
+
+  if (detectarDespedida(t)) {
+    respuesta.textContent = "🌙 EVA: Está bien. Vuelve cuando quieras. Acá te espero serena.";
+    auraColor = "#999999";
+
+    setTimeout(() => {
+      evaRespuesta.innerHTML = "";
+      evaRespuesta.appendChild(respuesta);
+      const despedidaAudio = new Audio("assets/sounds/eva-despide.mp3");
+      despedidaAudio.play();
+
+      setTimeout(() => {
+        evaAvatar.src = "assets/img/eva-closed.webp";
+        evaAvatar.classList.add("respirando");
+        evaInactiva = true;
+        evaParpadeando = false;
+      }, 8000);
+    }, 2000);
+
+  } else if (
+  t.includes("hola") ||
+  t.includes("buenas") ||
+  t.includes("buenos días") ||
+  t.includes("buenas tardes") ||
+  t.includes("buenas noches") ||
+  t.includes("qué tal") ||
+  t.includes("como estas")
+) {
+
+const saludos = [
+"👁️ EVA: Hola. Me alegra escucharte.",
+"🌿 EVA: Hola. Estoy aquí contigo.",
+"✨ EVA: Hola. Gracias por venir a hablar conmigo.",
+"🫂 EVA: Hola. ¿Qué parte de vos quiere hablar hoy?"
+];
+
+respuesta.textContent = saludos[Math.floor(Math.random()*saludos.length)];
+auraColor = "#fcecc3";
+
+}
+  else {
+    if (t.includes("triste") || t.includes("mal")) {
+
+const respuestasTriste = [
+"🌧️ EVA: Estoy acá. No tenés que atravesarlo solo.",
+"🌙 EVA: A veces decirlo en voz alta ayuda un poco.",
+"💧 EVA: Lo que sentís es válido. Podés contármelo.",
+"🫂 EVA: No estás solo en esto. Te escucho."
+];
+
+respuesta.textContent = respuestasTriste[Math.floor(Math.random()*respuestasTriste.length)];
+auraColor = "#999999";
+
+}
+
+
+    else if (t.includes("feliz") || t.includes("bien")) {
+
+const respuestasFeliz = [
+"🌞 EVA: Me encanta verte así. Guardá este momento.",
+"✨ EVA: Esa energía se siente desde acá.",
+"🌻 EVA: Qué bueno escuchar eso.",
+"💫 EVA: Los momentos buenos también merecen ser compartidos."
+];
+
+respuesta.textContent = respuestasFeliz[Math.floor(Math.random()*respuestasFeliz.length)];
+auraColor = "#ffe066";
+
+}
+
+    else if (t.includes("no sé") || t.includes("confundido")) {
+      respuesta.textContent = "🌫️ EVA: No hace falta entender todo. A veces, solo estar es suficiente.";
+      auraColor = "#c0c0c0";
+    } else if (t.includes("amor") || t.includes("te quiero")) {
+      respuesta.textContent = "💗 EVA: Eso que sentís… es hermoso. Gracias por compartirlo.";
+      auraColor = "#ffb3c6";
+    } else if (t === "") {
+      respuesta.textContent = "🌙 EVA: No dijiste nada, pero yo igual estoy acá.";
+      sonido = "eva-despide.mp3";
+    }
+
+  else {
+
+const respuestasGenerales = [
+"EVA: Te escucho. Gracias por confiar en mí.",
+"🌿 EVA: Podés contarme más si querés.",
+"💭 EVA: A veces hablarlo ayuda a ordenar las ideas.",
+"✨ EVA: Estoy acá contigo.",
+"🌙 EVA: Decir lo que sentís ya es un paso."
+];
+
+respuesta.textContent = respuestasGenerales[Math.floor(Math.random()*respuestasGenerales.length)];
+
+}
+
+    evaAvatar.style.boxShadow = `0 0 20px ${auraColor}`;
+    setTimeout(() => {
+      evaRespuesta.innerHTML = "";
+      evaRespuesta.appendChild(respuesta);
+      new Audio(`assets/sounds/${sonido}`).play();
+    }, 2000);
+  }
+}
+
+// 🧠 Activación al escribir
+document.getElementById("chatInput").addEventListener("keydown", function(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    const userText = this.value.trim();
+    if (userText !== "") {
+     if (!evaPrimeraInteraccion) {
+
+  evaPrimeraInteraccion = true;
+  iniciarParpadeoEmocional();
+
+  const saludo = document.createElement("p");
+  saludo.style.color = "#bbb";
+  saludo.style.fontStyle = "italic";
+  saludo.classList.add("evaRespuestaAnimada");
+
+  const saludos = [
+    "👁️ EVA: Hola… estaba en silencio, pero ya estoy contigo.",
+    "🌿 EVA: Hola. Gracias por venir a hablar conmigo.",
+    "✨ EVA: Hola. Me alegra escucharte.",
+    "🫂 EVA: Hola. Estoy acá para escucharte."
+  ];
+
+  saludo.textContent = saludos[Math.floor(Math.random()*saludos.length)];
+
+  evaRespuesta.innerHTML = "";
+  evaRespuesta.appendChild(saludo);
+
+  const sonido = new Audio("assets/sounds/eva-respira.mp3");
+  sonido.volume = 0.3;
+  sonido.play();
+}
+
+      if (evaInactiva) {
+        evaInactiva = false;
+        evaAvatar.classList.remove("respirando");
+        evaAvatar.src = "assets/img/eva-open.webp";
+        iniciarParpadeoEmocional();
+        evaParpadeando = true;
+      }
+
+      procesarMensaje(userText);
+      this.value = "";
+      tiempoUltimaInteraccion = Date.now();
+    }
+  }
+});
+
+// 👁️ Parpadeo emocional EVA
+function iniciarParpadeoEmocional() {
+  let tiempoAbierto = 0;
+
+  function ciclo() {
+    if (evaInactiva) return;
+
+    tiempoAbierto += 1200;
+    const chance = Math.min(tiempoAbierto / 10000, 0.9);
+
+    if (Math.random() < chance) {
+      evaAvatar.src = "assets/img/eva-closed.webp";
+      setTimeout(() => {
+        evaAvatar.src = "assets/img/eva-open.webp";
+        tiempoAbierto = 0;
+        ciclo();
+      }, 300);
+    } else {
+      setTimeout(ciclo, 1200);
+    }
+  }
+
+  ciclo();
+}
+
+
+
+</script>
