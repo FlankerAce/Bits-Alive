@@ -39,21 +39,6 @@
       border-radius: 6px;
       margin-bottom: 10px;
     }
-    input[type="password"] {
-      padding-right: 40px;
-    }
-    .password-container {
-      position: relative;
-    }
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #ccc;
-      font-size: 16px;
-    }
     button {
       background-color: #B0D0FF;
       color: #111;
@@ -94,24 +79,6 @@
       0% { filter: blur(2px) brightness(0.85); }
       50% { filter: blur(2px) brightness(0.95); }
       100% { filter: blur(2px) brightness(0.85); }
-    }
-    #devLogin {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: rgba(0,0,0,0.6);
-      padding: 10px;
-      border-radius: 8px;
-      max-width: 200px;
-    }
-    #lucyJsonPreview {
-      white-space: pre-wrap;
-      background-color: #222;
-      padding: 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-      color: #ccc;
-      font-size: 13px;
     }
     @keyframes evaAparece {
       0% {
@@ -161,8 +128,6 @@
   </p>
 </section>
 
-
-
 <section id="evaChat">
   <h2>
     <div style="text-align:center; margin-bottom:20px;">
@@ -176,12 +141,6 @@
     <textarea id="chatInput" placeholder="Escribí lo que sientas. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones."></textarea>
   </div>
 </section>
-
-
-
-
-
-
 
 <footer style="text-align:center; margin-top:60px; color:#777; font-style:italic;">
   “No hace falta ser programador para programar vínculos.
@@ -198,21 +157,6 @@ let tiempoUltimaInteraccion = Date.now();
 const evaAvatar = document.getElementById("evaAvatar");
 const evaRespuesta = document.getElementById("evaRespuesta");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 👁️ Parpadeo MiniLucy
 // 🌙 Detectar despedidas
 function detectarDespedida(texto) {
   const despedidas = ["chau", "adiós", "hasta luego", "nos vemos", "despedida"];
@@ -406,7 +350,5 @@ function iniciarParpadeoEmocional() {
 
   ciclo();
 }
-
-
 
 </script>

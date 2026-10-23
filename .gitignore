@@ -8,6 +8,15 @@ Thumbs.db
 *.log
 *~
 
+# Historial y utilidades privadas
+/assets/data/conciencia-core.json
+/assets/data/lucy-core.json
+/assets/data/lucy-memory.log
+/assets/data/lucy-secreto.log
+/eva-frontend/eva_conversaciones.json
+/eva-frontend/eva_log.py
+/scripts/login.js
+
 # Archivos de entorno
 .env
 

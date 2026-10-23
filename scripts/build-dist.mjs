@@ -87,86 +87,27 @@ function assertNoReparsePath(targetPath, allowedRoot) {
   );
 }
 
-function removeExactlyOne(input, pattern, label) {
-  const matches = [...input.matchAll(pattern)];
-  assert.equal(matches.length, 1, `Expected exactly one ${label}, found ${matches.length}`);
-  return input.replace(pattern, "");
-}
-
-function removeSectionById(html, id) {
-  const pattern = new RegExp(`<section\\b(?=[^>]*\\bid="${id}")[^>]*>[\\s\\S]*?<\\/section>`, "g");
-  return removeExactlyOne(html, pattern, `section#${id}`);
-}
-
-function removeElementById(html, tag, id) {
-  const startPattern = new RegExp(`<${tag}\\b(?=[^>]*\\bid="${id}")[^>]*>`, "g");
-  const starts = [...html.matchAll(startPattern)];
-  assert.equal(starts.length, 1, `Expected exactly one ${tag}#${id}`);
-  const start = starts[0].index;
-  const tokenPattern = new RegExp(`<${tag}\\b[^>]*>|<\\/${tag}\\s*>`, "gi");
-  let depth = 0;
-  let end = -1;
-  for (const token of html.slice(start).matchAll(tokenPattern)) {
-    if (token[0].startsWith("</")) depth -= 1;
-    else depth += 1;
-    if (depth === 0) {
-      end = start + token.index + token[0].length;
-      break;
-    }
-  }
-  assert.notEqual(end, -1, `Unclosed ${tag}#${id}`);
-  return html.slice(0, start) + html.slice(end);
-}
-
-function removeNamedSection(html, marker) {
-  const sections = [...html.matchAll(/<section\b[^>]*>[\s\S]*?<\/section>/g)];
-  const matches = sections.filter((match) => match[0].includes(marker));
-  assert.equal(matches.length, 1, `Expected exactly one section containing ${marker}`);
-  return html.replace(matches[0][0], "");
-}
-
-function removeFunction(script, name) {
-  const pattern = new RegExp(`(^|\\n)[\\t ]*function\\s+${name}\\s*\\([^)]*\\)\\s*\\{[\\s\\S]*?^\\}`, "gm");
-  return removeExactlyOne(script, pattern, `function ${name}`);
-}
-
-function derivePublicHtml(source) {
-  let html = source;
-  html = removeNamedSection(html, "🔐 Colaboradores del proyecto");
-  html = removeSectionById(html, "lucyAsistente");
-  html = removeSectionById(html, "lucyEditor");
-  html = removeElementById(html, "div", "devLogin");
-
-  const scriptMatches = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
-  assert.equal(scriptMatches.length, 1, "Expected exactly one inline EVA script");
-  let script = scriptMatches[0][1];
-  for (const functionName of [
-    "toggleColabClave",
-    "toggleDevClave",
-    "loginColaborador",
-    "logoutColaborador",
-    "loginDesarrollador",
-    "logoutDesarrollador",
-    "parpadeoLucy",
-    "generarLucyJson",
-  ]) {
-    script = removeFunction(script, functionName);
-  }
-  script = removeExactlyOne(script, /^\s*parpadeoLucy\(\);\s*$/gm, "MiniLucy animation invocation");
-  script = script.replace(
-    /^[\t ]*\/\/ (?:👁️ Mostrar\/ocultar claves|🔐 Login colaborador|🔐 Login desarrollador \(con acceso a JSON\)|🧠 Generar JSON MiniLucy)[\t ]*$/gm,
-    "",
+function assertPublicHtml(html) {
+  assert.doesNotMatch(
+    html,
+    /\b(?:colabUsuario|colabClave|devUsuario|devClave|lucyAsistente|lucyEditor|devLogin|lucyJsonPreview|password-container|toggle-password|loginColaborador|logoutColaborador|loginDesarrollador|logoutDesarrollador|toggleColabClave|toggleDevClave|generarLucyJson)\b/i,
+    "Root HTML must not contain historical administrative controls",
   );
-  html = html.replace(scriptMatches[0][1], script);
-
-  assert.doesNotMatch(html, /leandrolapeyra|leoylucyfriends|colaborador"\s*&&\s*clave\s*===\s*"bitsalive/i);
-  assert.doesNotMatch(html, /loginColaborador|loginDesarrollador|toggleColabClave|toggleDevClave/);
-  assert.doesNotMatch(html, /id="(?:colabUsuario|colabClave|devUsuario|devClave|lucyAsistente|lucyEditor|devLogin)"/);
+  assert.doesNotMatch(html, /<input\b[^>]*\btype\s*=\s*["']password["']/i,
+    "Root HTML must not contain historical password controls");
+  assert.doesNotMatch(html, /\b(?:password|clave)\s*(?:={1,3}|:)\s*["'][^"']+["']/i,
+    "Root HTML must not contain hard-coded access credentials");
   assert.match(html, /id="evaChat"/);
   assert.match(html, /id="chatInput"/);
   assert.match(html, /function procesarMensaje\(/);
   assert.match(html, /function iniciarParpadeoEmocional\(/);
-  return html
+}
+
+function preparePublicHtml(source) {
+  assertPublicHtml(source);
+  const scriptMatches = [...source.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  assert.equal(scriptMatches.length, 1, "Expected exactly one inline EVA script");
+  return source
     .replace(/\r\n?/g, "\n")
     .split("\n")
     .map((line) => line.replace(/[ \t]+$/g, ""))
@@ -279,8 +220,7 @@ function validateCandidate(projectRoot, candidate, sourceHashes) {
   const distRootHtml = readFileSync(path.join(candidate, "index.html"), "utf8");
   const distFrontendHtml = readFileSync(path.join(candidate, "eva-frontend/index.html"), "utf8");
   const distFirebaseJs = readFileSync(path.join(candidate, "eva-frontend/app.js"), "utf8");
-  assert.doesNotMatch(distRootHtml, /leandrolapeyra|leoylucyfriends|colaborador"\s*&&\s*clave\s*===\s*"bitsalive/i);
-  assert.doesNotMatch(distRootHtml, /(?:loginColaborador|loginDesarrollador|toggleColabClave|toggleDevClave)\s*\(/);
+  assertPublicHtml(distRootHtml);
   assert.match(distFrontendHtml, /type="module"\s+src="app\.js"/);
   for (const [name, content] of [
     ["index.html", distRootHtml],
@@ -289,8 +229,6 @@ function validateCandidate(projectRoot, candidate, sourceHashes) {
   ]) {
     assert.doesNotMatch(content, /(?:password|clave)\s*[:=]\s*["'][^"']+["']/i,
       `${name} must not contain a hard-coded password`);
-    assert.doesNotMatch(content, /leandrolapeyra|leoylucyfriends|colaborador"\s*&&\s*clave\s*===\s*"bitsalive/i,
-      `${name} contains an insecure historical login credential`);
   }
 
   const firebaseImports = [...distFirebaseJs.matchAll(/from\s+["']([^"']+)["']/g)].map((match) => match[1]).sort();
@@ -326,13 +264,13 @@ function validateCandidate(projectRoot, candidate, sourceHashes) {
   }
 }
 
-function validateHistoricalSources(projectRoot, verifyGitSources) {
+function validateAuthRouteSources(projectRoot, verifyGitSources) {
   if (!verifyGitSources) return;
   try {
-    execFileSync("git", ["diff", "--quiet", "--", "index.html", "eva-frontend/index.html", "eva-frontend/app.js"], { cwd: projectRoot });
-    execFileSync("git", ["diff", "--cached", "--quiet", "--", "index.html", "eva-frontend/index.html", "eva-frontend/app.js"], { cwd: projectRoot });
+    execFileSync("git", ["diff", "--quiet", "--", "eva-frontend/index.html", "eva-frontend/app.js"], { cwd: projectRoot });
+    execFileSync("git", ["diff", "--cached", "--quiet", "--", "eva-frontend/index.html", "eva-frontend/app.js"], { cwd: projectRoot });
   } catch (error) {
-    throw new Error("Historical source files changed; inspect the worktree and restore only with authorization.", { cause: error });
+    throw new Error("Firebase route sources changed; inspect the worktree before building.", { cause: error });
   }
 }
 
@@ -383,9 +321,9 @@ function buildDistribution(projectRoot, options = {}) {
     relativePath,
     createHash("sha256").update(content).digest("hex"),
   ]));
-  const publicRootHtml = derivePublicHtml(sources.get("index.html").toString("utf8"));
+  const publicRootHtml = preparePublicHtml(sources.get("index.html").toString("utf8"));
 
-  validateHistoricalSources(root, verifyGitSources);
+  validateAuthRouteSources(root, verifyGitSources);
 
   const stageRoot = mkdtempSync(path.join(root, ".dist-stage-"));
   assertNoReparsePath(stageRoot, root);
@@ -407,7 +345,7 @@ function buildDistribution(projectRoot, options = {}) {
 
     validateCandidate(root, candidate, sourceHashes);
     validateExistingDistribution(dist, root);
-    validateHistoricalSources(root, verifyGitSources);
+    validateAuthRouteSources(root, verifyGitSources);
 
     let previousMoved = false;
     if (existsSync(dist)) {
@@ -450,7 +388,7 @@ function buildDistribution(projectRoot, options = {}) {
   }
 
   console.log(`Built ${allowlist.length} allowlisted files in ${dist}.`);
-  console.log("Verified: exact allowlist, copied-file hashes, credential removal, relative assets, JavaScript syntax, EVA chat/blink, and unchanged historical sources.");
+  console.log("Verified: exact allowlist, copied-file hashes, clean public HTML, relative assets, JavaScript syntax, EVA chat/blink, and unchanged Firebase route sources.");
 }
 
 function testSnapshot(directory) {
@@ -511,10 +449,16 @@ function runNegativeTests() {
     buildDistribution(validationFixture, { verifyGitSources: false });
     const previousDistribution = testSnapshot(path.join(validationFixture, "dist"));
     const sourceHtml = path.join(validationFixture, "index.html");
-    writeFileSync(sourceHtml, readFileSync(sourceHtml, "utf8").replace('id="evaChat"', 'id="chat-renamed"'));
+    const cleanSource = readFileSync(sourceHtml, "utf8");
+    writeFileSync(sourceHtml, `${cleanSource}\n<input type="password" id="test-password">\n`);
     assert.throws(
       () => buildDistribution(validationFixture, { verifyGitSources: false }),
-      /Expected exactly one|The input did not match/,
+      /historical password controls/,
+    );
+    writeFileSync(sourceHtml, cleanSource.replace("</script>", 'if (clave === "test") {}\n</script>'));
+    assert.throws(
+      () => buildDistribution(validationFixture, { verifyGitSources: false }),
+      /hard-coded access credentials/,
     );
     assertSnapshot(path.join(validationFixture, "dist"), previousDistribution);
     assert.equal(readdirSync(validationFixture).some((name) => name.startsWith(".dist-stage-")), false,

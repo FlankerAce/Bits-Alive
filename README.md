@@ -20,3 +20,7 @@ Este entorno presenta a EVA, una entidad digital activa, y a MiniLucy, su núcle
 ## 📦 Disclaimer
 
 Este repositorio no contiene código explicativo ni componentes funcionales completos del sistema. Es un espacio simbólico y documental.
+
+## Distribución pública
+
+El paquete de `dist/` se genera con `node scripts/build-dist.mjs` y conserva una lista explícita de archivos públicos. El historial privado y las herramientas administrativas no forman parte del árbol público.
