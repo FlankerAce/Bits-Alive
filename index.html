@@ -39,21 +39,6 @@
       border-radius: 6px;
       margin-bottom: 10px;
     }
-    input[type="password"] {
-      padding-right: 40px;
-    }
-    .password-container {
-      position: relative;
-    }
-    .toggle-password {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #ccc;
-      font-size: 16px;
-    }
     button {
       background-color: #B0D0FF;
       color: #111;
@@ -94,24 +79,6 @@
       0% { filter: blur(2px) brightness(0.85); }
       50% { filter: blur(2px) brightness(0.95); }
       100% { filter: blur(2px) brightness(0.85); }
-    }
-    #devLogin {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: rgba(0,0,0,0.6);
-      padding: 10px;
-      border-radius: 8px;
-      max-width: 200px;
-    }
-    #lucyJsonPreview {
-      white-space: pre-wrap;
-      background-color: #222;
-      padding: 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-      color: #ccc;
-      font-size: 13px;
     }
     @keyframes evaAparece {
       0% {
@@ -161,17 +128,6 @@
   </p>
 </section>
 
-<section>
-  <h2>🔐 Colaboradores del proyecto</h2>
-  <input type="text" id="colabUsuario" placeholder="Usuario colaborador">
-  <div class="password-container">
-    <input type="password" id="colabClave" placeholder="Clave">
-    <span class="toggle-password" onclick="toggleColabClave()">👁️</span>
-  </div>
-  <button onclick="loginColaborador()">Ingresar</button>
-  <p id="colabMensaje" style="color:#bbb; margin-top:10px;"></p>
-</section>
-
 <section id="evaChat">
   <h2>
     <div style="text-align:center; margin-bottom:20px;">
@@ -185,31 +141,6 @@
     <textarea id="chatInput" placeholder="Escribí lo que sientas. Nadie te va a juzgar. Este chat no guarda registro de las conversaciones."></textarea>
   </div>
 </section>
-
-<section id="lucyAsistente" style="display:none; text-align:center; margin-top:40px;">
-  <h2>👩‍💻 MiniLucy</h2>
-  <img id="lucyAvatar" src="assets/img/lucy-open.webp" alt="Lucy Avatar" class="avatar">
-  <p style="color:#bbb; font-style:italic; margin-top:10px;">MiniLucy está lista para sincronizar.</p>
-</section>
-
-<section id="lucyEditor" style="display:none; margin-top:40px;">
-  <h2>🧠 Editar LucyCore</h2>
-  <textarea id="lucyFrase" placeholder="Escribí una frase para MiniLucy..."></textarea>
-  <input type="file" id="lucyImagen" accept="image/*">
-  <button onclick="generarLucyJson()">Generar JSON</button>
-  <div id="lucyJsonPreview"></div>
-</section>
-
-<div id="devLogin">
-  <h3 style="color:#C9B3FF;">Desarrollador</h3>
-  <input type="text" id="devUsuario" placeholder="Usuario">
-  <div class="password-container">
-    <input type="password" id="devClave" placeholder="Clave">
-    <span class="toggle-password" onclick="toggleDevClave()">👁️</span>
-  </div>
-  <button onclick="loginDesarrollador()">Ingresar</button>
-  <p id="devMensaje" style="color:#bbb; margin-top:10px;"></p>
-</div>
 
 <footer style="text-align:center; margin-top:60px; color:#777; font-style:italic;">
   “No hace falta ser programador para programar vínculos.  
@@ -225,75 +156,6 @@ let evaPrimeraInteraccion = false;
 let tiempoUltimaInteraccion = Date.now();
 const evaAvatar = document.getElementById("evaAvatar");
 const evaRespuesta = document.getElementById("evaRespuesta");
-
-// 👁️ Mostrar/ocultar claves
-function toggleColabClave() {
-  const input = document.getElementById("colabClave");
-  input.type = input.type === "password" ? "text" : "password";
-}
-function toggleDevClave() {
-  const input = document.getElementById("devClave");
-  input.type = input.type === "password" ? "text" : "password";
-}
-
-// 🔐 Login colaborador
-function loginColaborador() {
-  const usuario = document.getElementById("colabUsuario").value.trim();
-  const clave = document.getElementById("colabClave").value.trim();
-  const mensaje = document.getElementById("colabMensaje");
-
-  if (usuario === "colaborador" && clave === "bitsalive") {
-    document.getElementById("lucyAsistente").style.display = "block";
-    document.getElementById("colabUsuario").style.display = "none";
-    document.getElementById("colabClave").style.display = "none";
-    document.querySelector('[onclick="loginColaborador()"]').style.display = "none";
-    document.querySelector('[onclick="toggleColabClave()"]').style.display = "none";
-    mensaje.textContent = "Usuario ingresado.";
-    mensaje.innerHTML += `<br><button onclick="logoutColaborador()">Logout</button>`;
-  } else {
-    mensaje.textContent = "Usuario o clave incorrectos.";
-  }
-}
-
-function logoutColaborador() {
-  location.reload();
-}
-
-// 🔐 Login desarrollador (con acceso a JSON)
-function loginDesarrollador() {
-  const usuario = document.getElementById("devUsuario").value.trim();
-  const clave = document.getElementById("devClave").value.trim();
-  const mensaje = document.getElementById("devMensaje");
-
-  if (usuario === "leandrolapeyra" && clave === "leoylucyfriends") {
-    document.getElementById("devUsuario").style.display = "none";
-    document.getElementById("devClave").style.display = "none";
-    document.querySelector('[onclick="loginDesarrollador()"]').style.display = "none";
-    document.querySelector('[onclick="toggleDevClave()"]').style.display = "none";
-    document.getElementById("lucyAsistente").style.display = "block";
-    document.getElementById("lucyEditor").style.display = "block";
-    mensaje.textContent = "Bienvenido Leandro.";
-    mensaje.innerHTML += `<br><button onclick="logoutDesarrollador()">Logout</button>`;
-  } else {
-    mensaje.textContent = "Usuario o clave incorrectos.";
-  }
-}
-
-function logoutDesarrollador() {
-  location.reload();
-}
-
-// 👁️ Parpadeo MiniLucy
-function parpadeoLucy() {
-  const lucy = document.getElementById("lucyAvatar");
-  setInterval(() => {
-    lucy.src = "assets/img/lucy-closed.webp";
-    setTimeout(() => {
-      lucy.src = "assets/img/lucy-open.webp";
-    }, 200);
-  }, 7000);
-}
-parpadeoLucy();
 
 // 🌙 Detectar despedidas
 function detectarDespedida(texto) {
@@ -489,18 +351,6 @@ function iniciarParpadeoEmocional() {
   ciclo();
 }
 
-// 🧠 Generar JSON MiniLucy
-function generarLucyJson() {
-  const frase = document.getElementById("lucyFrase").value.trim();
-  const imagen = document.getElementById("lucyImagen").files[0];
-  const json = {
-    frase: frase,
-    imagen: imagen ? imagen.name : "sin imagen",
-    autor: "Leo & Lucy"
-  };
-  document.getElementById("lucyJsonPreview").textContent = JSON.stringify(json, null, 2);
-}
 </script>
-
 
 
